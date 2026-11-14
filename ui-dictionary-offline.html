@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI 词典 · 23 词可视化</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --ink:#1a1d21; --sub:#6b7280; --line:#e5e7eb;
+  --accent:#4f6ef7; --accent-soft:#eef1ff; --ok:#16a34a; --warn:#dc2626;
+  --radius:12px; --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;padding-bottom:120px}
+header{padding:48px 24px 8px;text-align:center}
+header h1{font-size:28px;letter-spacing:1px}
+header p{color:var(--sub);margin-top:6px;font-size:14px}
+.toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:16px;position:sticky;top:0;background:rgba(246,247,249,.92);backdrop-filter:blur(8px);z-index:50;border-bottom:1px solid var(--line)}
+.toc a{font-size:13px;color:var(--accent);text-decoration:none;background:var(--accent-soft);padding:4px 12px;border-radius:99px}
+main{max-width:880px;margin:0 auto;padding:24px}
+section{margin-top:44px}
+h2.part{font-size:22px;border-left:4px solid var(--accent);padding-left:12px;margin-bottom:6px}
+p.part-note{color:var(--sub);font-size:13px;margin-bottom:16px}
+.entry{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:14px}
+.entry h3{font-size:16px;display:flex;align-items:baseline;gap:10px}
+.entry h3 .en{font-family:var(--mono);color:var(--accent);font-size:15px}
+.entry .cn-def{color:var(--sub);font-size:13px;margin:4px 0 14px}
+.stage{border:1px dashed var(--line);border-radius:8px;padding:20px;background:#fafbfc;min-height:64px;position:relative}
+.note{font-size:12px;color:var(--sub);margin-top:10px;font-family:var(--mono)}
+button{font:inherit;cursor:pointer;border:none;border-radius:8px;padding:8px 16px;background:var(--accent);color:#fff}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+button:disabled{background:#c7cdd6;cursor:not-allowed}
+.demo-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;width:150px;font-size:13px;color:var(--sub)}
+
+/* Hover */
+.hover-box{display:inline-block;padding:14px 26px;border-radius:10px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);transition:all .2s;font-weight:600}
+.hover-box:hover{background:var(--accent);color:#fff;transform:translateY(-2px);box-shadow:0 8px 20px rgba(79,110,247,.35)}
+
+/* Tooltip */
+.tip-wrap{position:relative;display:inline-block}
+.tip-wrap .tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);background:#1a1d21;color:#fff;font-size:12px;padding:6px 10px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:.18s}
+.tip-wrap:hover .tip{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Popover */
+.pop-wrap{position:relative;display:inline-block}
+.pop-panel{position:absolute;top:calc(100% + 8px);left:0;width:230px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.12);padding:14px;font-size:13px;display:none;z-index:20}
+.pop-panel.open{display:block;animation:pop .16s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.pop-panel .hint{color:var(--sub);font-size:12px}
+
+/* Modal */
+.backdrop{position:fixed;inset:0;background:rgba(10,12,16,.45);display:none;align-items:center;justify-content:center;z-index:100}
+.backdrop.open{display:flex;animation:fade .18s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:#fff;border-radius:14px;padding:24px;width:min(420px,90vw);box-shadow:0 24px 60px rgba(0,0,0,.25)}
+.modal h4{margin-bottom:8px}
+.modal p{color:var(--sub);font-size:14px;margin-bottom:16px}
+
+/* Toast */
+#toast-host{position:fixed;right:20px;bottom:20px;display:flex;flex-direction:column;gap:10px;z-index:120}
+.toast{background:#1a1d21;color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:slidein .25s ease-out}
+.toast.good{border-left:3px solid var(--ok)}
+@keyframes slidein{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+
+/* Drawer */
+.drawer{position:fixed;top:0;right:-340px;width:320px;height:100vh;background:#fff;box-shadow:-12px 0 40px rgba(0,0,0,.15);transition:right .28s ease;z-index:110;padding:24px}
+.drawer.open{right:0}
+.drawer h4{margin-bottom:12px}
+.drawer p{font-size:13px;color:var(--sub)}
+
+/* Dropdown */
+.menu{position:absolute;top:calc(100% + 6px);left:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.12);min-width:180px;display:none;z-index:20;overflow:hidden}
+.menu.open{display:block;animation:pop .15s ease-out}
+.menu div{padding:9px 14px;font-size:14px;cursor:pointer}
+.menu div:hover{background:var(--accent-soft);color:var(--accent)}
+
+/* Accordion */
+.acc{border:1px solid var(--line);border-radius:10px;overflow:hidden;max-width:520px}
+.acc-item{border-bottom:1px solid var(--line)}
+.acc-item:last-child{border-bottom:none}
+.acc-head{padding:12px 16px;cursor:pointer;font-size:14px;font-weight:600;display:flex;justify-content:space-between;background:#fff}
+.acc-head:hover{background:var(--accent-soft)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .25s ease;font-size:13px;color:var(--sub);padding:0 16px}
+.acc-item.open .acc-body{max-height:120px;padding:0 16px 12px}
+.acc-item.open .arrow{transform:rotate(180deg)}
+.arrow{transition:.25s;color:var(--sub)}
+
+/* Skeleton */
+.skel{border-radius:8px;background:linear-gradient(100deg,#eceef2 40%,#f7f8fa 50%,#eceef2 60%);background-size:200% 100%;animation:shimmer 1.2s infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+
+/* 三态 */
+.state-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.btn-focus:focus{outline:2px solid var(--accent);outline-offset:2px}
+
+/* 布局注解图 */
+.anno{border:2px solid var(--accent);border-radius:10px;padding:14px;position:relative}
+.anno .tag{position:absolute;top:-11px;left:12px;background:var(--accent);color:#fff;font-size:11px;padding:1px 10px;border-radius:99px;font-family:var(--mono)}
+.anno.inner{border-color:var(--ok)}
+.anno.inner .tag{background:var(--ok)}
+.anno.ghosted{border-color:#b9c0cc}
+.anno.ghosted .tag{background:#6b7280}
+
+/* Grid / Flex / Stack */
+.cols-ctl{display:flex;gap:8px;margin-bottom:12px}
+.cols-ctl button{padding:5px 14px;font-size:13px}
+.grid-demo{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;transition:.25s}
+.grid-demo.c1{grid-template-columns:1fr}
+.grid-demo.c2{grid-template-columns:repeat(2,1fr)}
+.grid-demo.c3{grid-template-columns:repeat(3,1fr)}
+.flex-demo{display:flex;gap:12px;align-items:center}
+.flex-demo.vertical{flex-direction:column;align-items:stretch}
+.pill{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);border-radius:8px;padding:12px;text-align:center;font-size:13px}
+
+/* 响应式滑杆 */
+.resp-wrap{max-width:100%}
+.resp-stage{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.resp-inner{padding:12px;transition:width .2s}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.bp-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);font-family:var(--mono);margin-top:4px}
+.bp-flag{font-size:12px;font-family:var(--mono);color:var(--warn);margin-top:8px;min-height:18px}
+
+/* Sticky */
+.scroll-box{height:160px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+.sticky-head{position:sticky;top:0;background:var(--accent);color:#fff;padding:10px 14px;font-size:14px}
+.scroll-box .row{padding:14px;border-bottom:1px solid var(--line);font-size:13px;color:var(--sub)}
+
+footer{text-align:center;color:var(--sub);font-size:12px;margin-top:60px}
+kbd{font-family:var(--mono);background:#eef0f3;border:1px solid #d8dce2;border-radius:5px;padding:0 6px;font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>UI 词典</h1>
+  <p>23 个词 · 每个都能摸 · 学会 = 和程序员/设计师/AI 说同一种话</p>
+</header>
+
+<nav class="toc">
+  <a href="#c">① 组件词</a><a href="#l">② 布局词</a><a href="#r">③ 响应式词</a>
+</nav>
+
+<main>
+
+<!-- ============ ① 组件词 ============ -->
+<section id="c">
+<h2 class="part">① 组件词（11）</h2>
+<p class="part-note">页面上那些"有名字的零件"。每个 demo 都是真的，随便点、随便悬停。</p>
+
+<div class="entry"><h3>1. <span class="en">Hover</span> 悬停</h3><p class="cn-def">鼠标停上去时元素的变化——变色、浮起、加阴影。不用点，滑过去就行。</p>
+<div class="stage" style="text-align:center"><span class="hover-box">把鼠标滑到我身上</span></div>
+<p class="note">沟通话术："这个卡片 hover 时浮起 + 加阴影"</p></div>
+
+<div class="entry"><h3>2. <span class="en">Popover</span> 弹出层</h3><p class="cn-def">点按钮弹出的<b>小</b>浮层。<b>点外面就消失</b>，无红绿灯、无叉——正是你描述过的那个。</p>
+<div class="stage">
+  <div class="pop-wrap">
+    <button id="pop-btn">点我弹出 Popover</button>
+    <div class="pop-panel" id="pop-panel">
+      <b>我是一个 Popover</b>
+      <p class="hint" style="margin-top:6px">试试点面板外的任何地方——我会自动消失。</p>
+    </div>
+  </div>
+</div>
+<p class="note">默认行为：点外部关闭 · Esc 关闭。shadcn 里就叫 Popover</p></div>
+
+<div class="entry"><h3>3. <span class="en">Tooltip</span> 悬停提示</h3><p class="cn-def">纯提示，<b>不能交互</b>。和 Popover 的区别：Tooltip 只能用眼睛看，Popover 里面能放按钮。</p>
+<div class="stage" style="text-align:center">
+  <span class="tip-wrap"><button class="ghost">悬停在我上面</button><span class="tip">我是 Tooltip，1 秒后自己消失</span></span>
+</div>
+<p class="note">口诀：能点的用 Popover，只看看的用 Tooltip</p></div>
+
+<div class="entry"><h3>4. <span class="en">Modal / Dialog</span> 大弹窗</h3><p class="cn-def">居中大弹窗 + <b>背景变暗</b>。必须处理完才能干别的（或点背景关闭）。比 Popover 郑重。</p>
+<div class="stage" style="text-align:center"><button id="modal-btn">打开 Modal</button></div>
+<p class="note">那层变暗的膜本身也有名字，见第 10 个词 Backdrop</p></div>
+
+<div class="entry"><h3>5. <span class="en">Toast</span> 飘过的通知</h3><p class="cn-def">角落里弹出来、<b>几秒后自己消失</b>的通知。不用点任何东西。</p>
+<div class="stage" style="text-align:center"><button id="toast-btn">弹一个 Toast（看右下角）</button></div>
+<p class="note">shadcn 里用 Sonner 实现，名字不同东西相同</p></div>
+
+<div class="entry"><h3>6. <span class="en">Drawer / Sheet</span> 抽屉</h3><p class="cn-def">从屏幕边缘滑出来的面板，手机端最常用。</p>
+<div class="stage" style="text-align:center"><button id="drawer-btn">从右边滑出抽屉</button></div>
+<p class="note">shadcn 里叫 Sheet；手机版布局里侧边栏常变成它</p></div>
+
+<div class="entry"><h3>7. <span class="en">Dropdown</span> 下拉菜单</h3><p class="cn-def">点一下列出一串选项。长得很像 Popover，但它专用于"选一项"。</p>
+<div class="stage">
+  <div class="pop-wrap">
+    <button id="menu-btn">选择操作 ▾</button>
+    <div class="menu" id="menu"><div>重命名</div><div>复制路径</div><div style="color:var(--warn)">删除…</div></div>
+  </div>
+</div></div>
+
+<div class="entry"><h3>8. <span class="en">Accordion</span> 折叠面板</h3><p class="cn-def">点标题展开、再点收起。FAQ 页面的标配。</p>
+<div class="stage">
+  <div class="acc">
+    <div class="acc-item"><div class="acc-head">什么是组件？<span class="arrow">▾</span></div><div class="acc-body">页面上可复用的最小功能件。一个按钮、一个弹窗，都是组件。</div></div>
+    <div class="acc-item"><div class="acc-head">为什么词表这么重要？<span class="arrow">▾</span></div><div class="acc-body">一个词压缩一段话，且全行业语义一致——人和 AI 都听得懂。</div></div>
+  </div>
+</div></div>
+
+<div class="entry"><h3>9. <span class="en">Skeleton</span> 骨架屏</h3><p class="cn-def">数据还没到时，先用灰色闪光占位，而不是白屏傻等。</p>
+<div class="stage">
+  <div style="display:flex;gap:14px;align-items:center">
+    <div class="skel" style="width:56px;height:56px;border-radius:50%"></div>
+    <div style="flex:1"><div class="skel" style="height:14px;width:70%;margin-bottom:8px"></div><div class="skel" style="height:14px;width:45%"></div></div>
+  </div>
+</div>
+<p class="note">加载体验三兄弟：Skeleton（占位）→ Toast（通知）→ Popover（交互）</p></div>
+
+<div class="entry"><h3>10. <span class="en">Backdrop / Overlay</span> 背景膜</h3><p class="cn-def">让背景变暗/模糊的那层膜，让弹层内容凸显出来。刚开的 Modal 背后就是它。</p>
+<div class="stage" style="text-align:center"><button id="modal-btn2">再看一次（留意暗下来的背景）</button></div></div>
+
+<div class="entry"><h3>11. <span class="en">Disabled · Active · Focus</span> 三态</h3><p class="cn-def">Disabled 不可点（灰）· Active 正在被按下 · Focus 被键盘/点击选中（描边）。</p>
+<div class="stage state-row">
+  <button disabled>Disabled 禁用</button>
+  <button>普通（点住我不松手 = Active）</button>
+  <button class="btn-focus ghost">点我一下 = Focus 描边</button>
+</div></div>
+
+</section>
+
+<!-- ============ ② 布局词 ============ -->
+<section id="l">
+<h2 class="part">② 布局词（7）</h2>
+<p class="part-note">组件怎么排队。层级：Layout 总纲 → Grid/Flex/Stack 排列手法 → Container/Section 盒子 → Block 内容块。</p>
+
+<div class="entry"><h3>12. <span class="en">Layout</span> 版式总纲</h3><p class="cn-def">整页的骨架：哪里是侧边栏、哪里是主区、哪里是页脚。下面这张图是它的最小版：</p>
+<div class="stage">
+  <div class="anno"><span class="tag">Layout</span>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <div class="anno ghosted" style="width:90px;min-height:90px"><span class="tag">侧边栏</span></div>
+      <div class="anno inner" style="flex:1;min-height:90px"><span class="tag">主区</span></div>
+    </div>
+  </div>
+</div>
+<p class="note">说"侧边栏布局""上下布局"，AI 就知道骨架了</p></div>
+
+<div class="entry"><h3>13. <span class="en">Grid</span> 网格</h3><p class="cn-def">行列矩阵排布。卡片墙的标配。点按钮感受列数变化：</p>
+<div class="stage">
+  <div class="cols-ctl"><button data-c="c1">1 列</button><button data-c="c2">2 列</button><button data-c="c3" class="ghost">3 列（常用）</button></div>
+  <div class="grid-demo" id="grid-demo"><div class="pill">卡片</div><div class="pill">卡片</div><div class="pill">卡片</div><div class="pill">卡片</div><div class="pill">卡片</div><div class="pill">卡片</div></div>
+</div>
+<p class="note">话术："卡片用 grid，一行 3 个，间距 16px"</p></div>
+
+<div class="entry"><h3>14. <span class="en">Flex</span> 单向排列</h3><p class="cn-def">横排或竖排。和 Grid 的区别：Flex 是"一根线上的队形"，Grid 是"一张网"。</p>
+<div class="stage">
+  <div class="cols-ctl"><button id="flex-toggle">切换 横排 ↔ 竖排</button></div>
+  <div class="flex-demo" id="flex-demo"><div class="pill">甲</div><div class="pill">乙</div><div class="pill">丙</div></div>
+</div>
+<p class="note">话术："三个按钮 flex 横排，间距 12px"</p></div>
+
+<div class="entry"><h3>15. <span class="en">Stack</span> 竖向堆叠</h3><p class="cn-def">Flex 的竖排特例，从上往下。表单几乎都是 Stack。</p>
+<div class="stage">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:320px">
+    <div class="pill">姓名输入框</div><div class="pill">邮箱输入框</div><div class="pill">提交按钮</div>
+  </div>
+</div>
+<p class="note">"表单 stack 排列，间距 8px"——这句话 AI 天天听</p></div>
+
+<div class="entry"><h3>16. <span class="en">Container</span> 限宽容器</h3><p class="cn-def">把内容锁在一个最大宽度里居中，大屏幕上不至于一行字拉到三米长。</p>
+<div class="stage">
+  <div style="background:#eef1ff;border:1px dashed var(--accent);border-radius:8px;height:60px;max-width:420px;margin:0 auto;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:13px">我是 Container，锁宽居中</div>
+</div></div>
+
+<div class="entry"><h3>17. <span class="en">Section</span> 大段区块</h3><p class="cn-def">页面的一大段：头图区（Hero）、功能介绍区、页脚。Layout 就是一个个 Section 摞起来的。</p>
+<div class="stage">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div class="anno ghosted" style="min-height:44px"><span class="tag">Hero Section</span></div>
+    <div class="anno ghosted" style="min-height:44px"><span class="tag">功能 Section</span></div>
+    <div class="anno ghosted" style="min-height:44px"><span class="tag">Footer Section</span></div>
+  </div>
+</div></div>
+
+<div class="entry"><h3>18. <span class="en">Block</span> 内容块</h3><p class="cn-def">Notion / 建站工具里说的"块"——一段现成的内容积木。</p>
+<div class="stage">
+  <div style="border:1px solid var(--line);border-radius:10px;overflow:hidden;max-width:420px">
+    <div style="padding:10px 14px;font-size:14px">📝 一段文字块</div>
+    <div style="padding:10px 14px;font-size:14px;border-top:1px solid var(--line)">☑️ 一个待办块</div>
+    <div style="padding:10px 14px;font-size:14px;border-top:1px solid var(--line)">🖼️ 一张图片块</div>
+  </div>
+</div></div>
+
+</section>
+
+<!-- ============ ③ 响应式词 ============ -->
+<section id="r">
+<h2 class="part">③ 响应式词（5）</h2>
+<p class="part-note">同一棵嵌套树，在不同屏宽下换折法。</p>
+
+<div class="entry"><h3>19-20. <span class="en">Responsive + Breakpoint</span> 响应式 + 断点</h3><p class="cn-def">拖动滑杆模拟屏幕变窄——过了断点（700px）卡片自动从 3 列变 1 列。<b>页面还是同一个页面</b>。</p>
+<div class="stage resp-wrap">
+  <div class="resp-stage"><div class="resp-inner" id="resp-inner"><div class="grid-demo" id="resp-grid"><div class="pill">卡片</div><div class="pill">卡片</div><div class="pill">卡片</div></div></div></div>
+  <input type="range" id="resp-slider" min="320" max="1000" value="1000">
+  <div class="bp-labels"><span>320</span><span>700 ←断点</span><span>1000px</span></div>
+  <div class="bp-flag" id="bp-flag"></div>
+</div>
+<p class="note">桌面版和手机版不是两个页面，是同一棵树换了折法</p></div>
+
+<div class="entry"><h3>21. <span class="en">Mobile-first</span> 手机优先</h3><p class="cn-def">先做手机版（最窄、最简单），再往大屏加列、加侧边栏。现在的默认做法。</p>
+<div class="stage" style="display:flex;gap:12px;align-items:center;justify-content:center">
+  <div class="demo-card" style="text-align:center">📱 手机版<br>1 列，一切竖排</div>
+  <span style="color:var(--sub)">→ 加宽 →</span>
+  <div class="demo-card" style="text-align:center;width:220px">🖥️ 桌面版<br>加列、加侧边栏、加悬浮</div>
+</div></div>
+
+<div class="entry"><h3>22. <span class="en">Fluid / Fixed</span> 流动 / 固定</h3><p class="cn-def">Fluid 按百分比跟着屏幕撑，Fixed 写死像素。现代做法：外层 Fluid + 内层 Container 限宽。</p>
+<div class="stage">
+  <div style="display:flex;gap:12px">
+    <div style="flex:1;background:var(--accent-soft);border:1px dashed var(--accent);border-radius:8px;height:52px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--accent)">Fluid：随窗口伸缩</div>
+    <div style="width:130px;background:#f0fdf4;border:1px dashed var(--ok);border-radius:8px;height:52px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--ok)">Fixed: 130px</div>
+  </div>
+</div></div>
+
+<div class="entry"><h3>23. <span class="en">Sticky</span> 钉住</h3><p class="cn-def">滚动时钉在原地不走的元素。在下面这个框里滚一滚，蓝色标题钉着不走：</p>
+<div class="stage"><div class="scroll-box"><div class="sticky-head">我是 Sticky 头部，往下滚试试</div><div class="row">内容行 1</div><div class="row">内容行 2</div><div class="row">内容行 3</div><div class="row">内容行 4</div><div class="row">内容行 5</div><div class="row">内容行 6</div></div></div>
+<p class="note">导航条、表格表头常用</p></div>
+
+</section>
+
+<footer>UI 词典 · 为 aliastag 生成 · shadcn/ui 词表为准 · 单文件离线可用</footer>
+</main>
+
+<div class="backdrop" id="backdrop"><div class="modal"><h4>我是 Modal</h4><p>注意背景变暗了（那就是 Backdrop）。点背景、按 Esc，都会关闭。</p><button id="modal-close">知道了</button></div></div>
+<div class="drawer" id="drawer"><h4>我是 Drawer / Sheet</h4><p>从屏幕右缘滑入的面板。手机端的"侧边栏"通常就长这样。</p><br><button class="ghost" id="drawer-close">关闭抽屉</button></div>
+<div id="toast-host"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+/* Popover + Dropdown：点外部关闭 */
+function outsideToggle(btnId,panelId){
+  const b=$(btnId),p=$(panelId);
+  b.addEventListener('click',e=>{e.stopPropagation();p.classList.toggle('open')});
+  document.addEventListener('click',e=>{if(!p.contains(e.target))p.classList.remove('open')});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')p.classList.remove('open')});
+}
+outsideToggle('pop-btn','pop-panel');outsideToggle('menu-btn','menu');
+/* Modal */
+const bd=$('backdrop');
+const openModal=()=>bd.classList.add('open');
+const closeModal=()=>bd.classList.remove('open');
+$('modal-btn').onclick=openModal;$('modal-btn2').onclick=openModal;
+$('modal-close').onclick=closeModal;
+bd.addEventListener('click',e=>{if(e.target===bd)closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+/* Toast */
+$('toast-btn').onclick=()=>{
+  const t=document.createElement('div');t.className='toast good';t.textContent='✅ 已保存（3 秒后自己消失）';
+  $('toast-host').appendChild(t);setTimeout(()=>t.remove(),3000);
+};
+/* Drawer */
+$('drawer-btn').onclick=()=>$('drawer').classList.add('open');
+$('drawer-close').onclick=()=>$('drawer').classList.remove('open');
+/* Accordion */
+document.querySelectorAll('.acc-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')));
+/* Grid 列数 */
+document.querySelectorAll('.cols-ctl [data-c]').forEach(b=>b.onclick=()=>{
+  $('grid-demo').className='grid-demo '+b.dataset.c;
+  document.querySelectorAll('.cols-ctl [data-c]').forEach(x=>x.className='');
+  b.className='ghost';
+});
+document.querySelector('[data-c="c3"]').className='ghost';
+/* Flex 方向 */
+$('flex-toggle').onclick=()=>$('flex-demo').classList.toggle('vertical');
+/* 响应式断点演示 */
+const slider=$('resp-slider'),inner=$('resp-inner'),flag=$('bp-flag');
+slider.addEventListener('input',()=>{
+  inner.style.width=slider.value+'px';
+  flag.textContent=slider.value<700?'📱 已过断点（<700px）→ 折成 1 列':'🖥️ 宽屏（≥700px）→ 3 列';
+  $('resp-grid').className='grid-demo '+(slider.value<700?'c1':'c3');
+});
+</script>
+</body>
+</html>

@@ -6,7 +6,8 @@
 
 本站是一份**可触摸的可视化词典**：每个词都配一个真的能点的 live demo。玩 30 秒，词和手感焊死在脑子里。
 
-🔗 **在线版**：https://samuelonly.github.io/ui-dictionary/
+🔗 **在线版**：https://samuelonly.github.io/ui-dictionary/（极简单文件版）
+🚀 **增强版**：https://samuelonly.github.io/ui-dictionary/enhanced/（真 shadcn/ui 组件 + 真动效）
 
 ## 词表
 

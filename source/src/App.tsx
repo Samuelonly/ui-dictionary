@@ -51,6 +51,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { CatContext, PrototypeStage, SCENE_COMPONENTS } from "./Prototype"
+import "./proto.css"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 /* ================= 通用骨架 ================= */
@@ -60,14 +62,15 @@ const REPO_URL = "https://github.com/Samuelonly/ui-dictionary"
 
 type Variant = { name: string; demo: React.ReactNode }
 
-function Entry({ num, en, cn, def, note, variants, children }: {
+function Entry({ num, en, cn, def, note, variants, scene, children }: {
   num: number
   en: string
   cn: string
   def: React.ReactNode
   note?: string
   variants?: Variant[]
-  children: React.ReactNode
+  scene?: React.ReactNode
+  children?: React.ReactNode
 }) {
   return (
     <div className="rounded-xl border bg-card p-5 min-w-0 flex flex-col">
@@ -80,7 +83,7 @@ function Entry({ num, en, cn, def, note, variants, children }: {
         {variants && variants.length > 1 && <MoreVariants count={variants.length} items={variants} />}
       </div>
       <p className="mt-2 mb-3 text-[13px] leading-relaxed text-muted-foreground">{def}</p>
-      <div className="rounded-lg border bg-background p-5 min-h-44 flex flex-col flex-1 flex-wrap items-center justify-center gap-4">{children}</div>
+      <div className="flex flex-col flex-1"><PrototypeStage num={num} en={en} scene={scene}>{children}</PrototypeStage></div>
       {note && <p className="mt-auto pt-2.5 font-mono text-[11px] text-muted-foreground">{note}</p>}
     </div>
   )
@@ -121,9 +124,9 @@ function MoreVariants({ count, items }: { count: number; items: Variant[] }) {
 
 function Box({ label, dashed = false }: { label: string; dashed?: boolean }) {
   return (
-    <div className="relative min-h-14 rounded-lg border-2 border-zinc-400 p-3">
-      {dashed && <div className="absolute inset-0 border-2 border-dashed border-zinc-400 rounded-lg" />}
-      <span className="absolute -top-2.5 left-2 bg-zinc-600 text-white text-[10px] px-2 rounded-full">{label}</span>
+    <div className="relative min-h-14 rounded-md border border-zinc-200 bg-white/70 p-3 shadow-sm">
+      {dashed && <div className="absolute inset-0 rounded-md border border-dashed border-zinc-200" />}
+      <span className="absolute -top-2 left-2 rounded-full bg-zinc-800 text-white text-[9px] px-2 py-0.5">{label}</span>
     </div>
   )
 }
@@ -294,7 +297,7 @@ export default function App() {
       {/* Hero */}
       <div className="py-10 text-center px-4">
         <h1 className="text-4xl font-bold tracking-tight">UI 词典</h1>
-        <p className="mt-3 text-muted-foreground">46 个词 = 21 组件 + 7 布局 + 13 动效 + 5 响应式</p>
+        <p className="mt-3 text-muted-foreground">51 个词 = 21 组件 + 7 布局 + 19 动效 + 4 响应式</p>
         <p className="mt-1.5 text-xs text-muted-foreground">大 Tab 切分类 · 每类横向三列 · 编号横向走 · 页面默认待机，悬停/点击才演 · <span className="text-emerald-600">右上角「更多 N 种」= 一个词的全部效果</span></p>
       </div>
 
@@ -305,8 +308,8 @@ export default function App() {
             <TabsList className="grid w-full grid-cols-4 h-11">
               <TabsTrigger value="c1" className="text-[11px] sm:text-sm">① 组件词 21</TabsTrigger>
               <TabsTrigger value="c2" className="text-[11px] sm:text-sm">② 布局词 7</TabsTrigger>
-              <TabsTrigger value="c3" className="text-[11px] sm:text-sm">③ 动效词 13</TabsTrigger>
-              <TabsTrigger value="c4" className="text-[11px] sm:text-sm">④ 响应式 5</TabsTrigger>
+              <TabsTrigger value="c3" className="text-[11px] sm:text-sm">③ 动效词 19</TabsTrigger>
+              <TabsTrigger value="c4" className="text-[11px] sm:text-sm">④ 响应式 4</TabsTrigger>
             </TabsList>
           </div>
         </div>
@@ -315,6 +318,7 @@ export default function App() {
 
           {/* ==================== ① 组件词 21 ==================== */}
           <TabsContent value="c1" className="mt-8">
+            <CatContext.Provider value="c1">
             <p className="text-sm text-muted-foreground mb-7">回答「<b>放什么</b>」——页面上那些有名字的零件。页面待机，悬停/点击才演。</p>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 
@@ -567,10 +571,12 @@ export default function App() {
               </Entry>
 
             </div>
+            </CatContext.Provider>
           </TabsContent>
 
           {/* ==================== ② 布局词 7 ==================== */}
           <TabsContent value="c2" className="mt-8">
+            <CatContext.Provider value="c2">
             <p className="text-sm text-muted-foreground mb-7">回答「<b>怎么排</b>」——组件排队的方式。层级：Layout 总纲 → Grid/Flex/Stack 手法 → Container/Section 盒子 → Block 内容块。</p>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 
@@ -620,11 +626,11 @@ export default function App() {
               </Entry>
 
               <Entry num={5} en="Container" cn="限宽容器" def="把内容锁在一个最大宽度里居中。锁多宽由内容决定——窄、中、宽三档，看右上角。" note="本站页面整体就装在一个 Container 里" variants={[
-                { name: "窄（max-w-sm）", demo: <div className="w-full"><div className="mx-auto max-w-[60%] h-10 rounded-lg border-2 border-dashed border-zinc-400 bg-muted/30 flex items-center justify-center text-[10px] text-muted-foreground">窄</div></div> },
-                { name: "宽（max-w-xl）", demo: <div className="w-full"><div className="mx-auto max-w-full h-10 rounded-lg border-2 border-dashed border-zinc-400 bg-muted/30 flex items-center justify-center text-[10px] text-muted-foreground">宽（几乎撑满）</div></div> },
+                { name: "窄（max-w-sm）", demo: <div className="w-full"><div className="mx-auto max-w-[60%] h-10 rounded-lg border border-zinc-300 bg-white/70 flex items-center justify-center text-[10px] text-muted-foreground">窄</div></div> },
+                { name: "宽（max-w-xl）", demo: <div className="w-full"><div className="mx-auto max-w-full h-10 rounded-lg border border-zinc-300 bg-white/70 flex items-center justify-center text-[10px] text-muted-foreground">宽（几乎撑满）</div></div> },
               ]}>
                 <div className="w-full">
-                  <div className="mx-auto max-w-xs h-14 rounded-lg border-2 border-dashed border-zinc-400 bg-muted/30 flex items-center justify-center text-xs text-muted-foreground">我是 Container，锁宽居中</div>
+                  <div className="mx-auto max-w-xs h-14 rounded-lg border border-zinc-300 bg-white/70 flex items-center justify-center text-xs text-muted-foreground">我是 Container，锁宽居中</div>
                 </div>
               </Entry>
 
@@ -650,10 +656,12 @@ export default function App() {
               </Entry>
 
             </div>
+            </CatContext.Provider>
           </TabsContent>
 
-          {/* ==================== ③ 动效词 13 ==================== */}
+          {/* ==================== ③ 动效词 19 ==================== */}
           <TabsContent value="c3" className="mt-8">
+            <CatContext.Provider value="c3">
             <p className="text-sm text-muted-foreground mb-7">回答「<b>怎么变</b>」——元素状态转换的方式。动效挂在组件状态上（hover 时发光 = 组件 Hover + 动效 Glow）。页面待机，悬停/点击才演。</p>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 
@@ -751,11 +759,20 @@ export default function App() {
                 {linkHighlightVariants[0].demo}
               </Entry>
 
+              <Entry num={14} en="Spotlight Card" cn="聚光灯卡片" def="鼠标在卡片上移动，一团柔光跟着走，移开又回到中间。" note="话术：卡片上叠一层跟随鼠标的柔光" scene={SCENE_COMPONENTS[14]} />
+              <Entry num={15} en="3D Tilt" cn="3D 跟随倾斜" def="鼠标往哪边，卡片就朝那边轻轻立体转一下，离开回正。" note="话术：卡片跟着鼠标轻轻立体转一下" scene={SCENE_COMPONENTS[15]} />
+              <Entry num={16} en="Magnetic Button" cn="磁吸按钮" def="鼠标靠近时按钮被吸过去一点，离开时弹回原位。" note="话术：按钮像有磁性，靠近就吸一下" scene={SCENE_COMPONENTS[16]} />
+              <Entry num={17} en="Line Mask Reveal" cn="逐行遮罩升起" def="标题一行一行从下往上升起，像被一层遮罩放出来。" note="话术：标题逐行从下往上升起" scene={SCENE_COMPONENTS[17]} />
+              <Entry num={18} en="Underline Draw" cn="下划线展开" def="鼠标放上去，下划线从左边画过去。" note="话术：链接下划线从左往右画出来" scene={SCENE_COMPONENTS[18]} />
+              <Entry num={19} en="Stagger Fade-up" cn="错峰淡入上移" def="一组卡片一个接一个淡入、往上浮一点。" note="话术：卡片一张接一张错开时间浮上来" scene={SCENE_COMPONENTS[19]} />
+
             </div>
+            </CatContext.Provider>
           </TabsContent>
 
-          {/* ==================== ④ 响应式词 5 ==================== */}
+          {/* ==================== ④ 响应式词 4 ==================== */}
           <TabsContent value="c4" className="mt-8">
+            <CatContext.Provider value="c4">
             <p className="text-sm text-muted-foreground mb-7">回答「<b>宽度变了怎么办</b>」——同一棵嵌套树，在不同屏宽下换折法。本站自己就是实物：大 Tab + 三列，手机上自动收成一竖列。</p>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 
@@ -793,8 +810,8 @@ export default function App() {
                 { name: "全部 Fixed", demo: <div className="flex gap-2 w-full overflow-hidden"><div className="w-40 h-10 rounded-md border bg-muted/40 flex items-center justify-center text-[10px] text-muted-foreground shrink-0">160px</div><div className="w-40 h-10 rounded-md border bg-muted/40 flex items-center justify-center text-[10px] text-muted-foreground shrink-0">160px</div></div> },
               ]}>
                 <div className="flex gap-3 w-full">
-                  <div className="flex-1 h-12 rounded-lg border-2 border-dashed border-zinc-400 bg-muted/30 flex items-center justify-center text-xs text-muted-foreground">Fluid：随窗口伸缩</div>
-                  <div className="w-28 h-12 rounded-lg border-2 border-dashed border-zinc-400 bg-muted/30 flex items-center justify-center text-xs text-muted-foreground">Fixed: 112px</div>
+                  <div className="flex-1 h-12 rounded-lg border border-zinc-300 bg-white/70 flex items-center justify-center text-xs text-muted-foreground">Fluid：随窗口伸缩</div>
+                  <div className="w-28 h-12 rounded-lg border border-zinc-300 bg-white/70 flex items-center justify-center text-xs text-muted-foreground">Fixed: 112px</div>
                 </div>
               </Entry>
 
@@ -810,6 +827,7 @@ export default function App() {
               </Entry>
 
             </div>
+            </CatContext.Provider>
           </TabsContent>
 
         </main>

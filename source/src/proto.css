@@ -1,0 +1,167 @@
+/* ============================================================
+   UI 词典 · 原型卡演示区
+   每张卡的演示区 = 彩色底 + 一个完整的迷你真实页面。
+   页面默认待机；只有鼠标碰到那张卡才演。
+   ============================================================ */
+
+.uix-stage {
+  position: relative;
+  min-height: 252px;
+  padding: 14px;
+  display: flex;
+  border-radius: 10px;
+  background: var(--st);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* 8 套配色：舞台底 / 迷你页底 / 正文色 / 强调色 / 分隔线 / 面板底 */
+.uix-t0 { --st: linear-gradient(145deg,#17172b,#2b2350); --pg: #14142a; --ink: #f7f5ff; --acc: #b9a8ff; --line: rgba(255,255,255,.16); --panel: rgba(255,255,255,.07); }
+.uix-t1 { --st: linear-gradient(145deg,#f2d9a7,#e9b878); --pg: #fbf6ec; --ink: #2a2318; --acc: #b8722c; --line: rgba(80,60,30,.16); --panel: rgba(120,88,40,.07); }
+.uix-t2 { --st: linear-gradient(145deg,#a8e6cf,#69c9a8); --pg: #f6fffb; --ink: #183a2f; --acc: #168a63; --line: rgba(20,90,66,.15); --panel: rgba(20,120,85,.07); }
+.uix-t3 { --st: linear-gradient(145deg,#f7c9d6,#e5a0bd); --pg: #fff8fa; --ink: #44202e; --acc: #c04f78; --line: rgba(120,40,70,.15); --panel: rgba(160,60,100,.06); }
+.uix-t4 { --st: linear-gradient(145deg,#bcdcf7,#84b6e8); --pg: #f7fbff; --ink: #1b3550; --acc: #2f6fb5; --line: rgba(30,80,130,.15); --panel: rgba(40,100,170,.07); }
+.uix-t5 { --st: linear-gradient(145deg,#3d4048,#202329); --pg: #ffffff; --ink: #22242b; --acc: #4b4f5c; --line: rgba(30,34,42,.13); --panel: rgba(30,34,42,.045); }
+.uix-t6 { --st: linear-gradient(145deg,#e9b96b,#c9793d); --pg: #2b2019; --ink: #fdf1e2; --acc: #f0b96e; --line: rgba(255,230,200,.18); --panel: rgba(255,225,190,.08); }
+.uix-t7 { --st: linear-gradient(145deg,#d9cdf7,#b3a1ec); --pg: #fbf9ff; --ink: #2e2350; --acc: #7654c9; --line: rgba(80,50,140,.15); --panel: rgba(100,70,170,.07); }
+
+.uix-mini {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--pg);
+  color: var(--ink);
+  box-shadow: 0 14px 30px rgba(15,15,30,.22), 0 2px 6px rgba(15,15,30,.12);
+  transition: transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s;
+}
+.uix-stage:hover .uix-mini { transform: translateY(-2px); box-shadow: 0 20px 38px rgba(15,15,30,.28); }
+
+/* 迷你页 · 顶部导航 */
+.uix-nav { flex: none; height: 27px; padding: 0 11px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.uix-brand { font-size: 8.5px; font-weight: 800; letter-spacing: .14em; color: var(--acc); white-space: nowrap; }
+.uix-links { display: flex; gap: 9px; font-size: 7.5px; letter-spacing: .05em; opacity: .62; }
+.uix-dot { flex: none; width: 13px; height: 13px; border-radius: 50%; background: var(--acc); opacity: .5; margin-left: 7px; }
+
+/* 迷你页 · 标题区 */
+.uix-hero { flex: none; padding: 11px 13px 0; }
+.uix-eyebrow { font-size: 7px; letter-spacing: .2em; opacity: .6; text-transform: uppercase; }
+.uix-title { font-size: 17px; font-weight: 800; line-height: 1.15; letter-spacing: -.01em; margin-top: 5px; }
+.uix-sub { font-size: 8px; line-height: 1.55; opacity: .66; margin-top: 4px; }
+
+/* 迷你页 · 内容面板（老词条的交互 demo 装在这里） */
+.uix-panel { flex: 1; min-height: 104px; margin: 10px 12px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); display: flex; flex-direction: column; overflow: hidden; }
+.uix-panelbar { flex: none; height: 17px; padding: 0 7px; display: flex; align-items: center; gap: 3px; border-bottom: 1px solid var(--line); font-size: 6.5px; letter-spacing: .1em; opacity: .55; }
+.uix-panelbar i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; display: block; }
+.uix-slot { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 7px; padding: 9px; overflow: auto; scrollbar-width: none; text-align: center; }
+.uix-slot::-webkit-scrollbar { display: none; }
+.uix-slot { font-size: 10px; }
+.uix-slot button, .uix-slot [role="button"] { font-size: 9.5px; height: auto; min-height: 25px; padding: 3px 9px; }
+.uix-slot svg { width: 12px; height: 12px; }
+.uix-slot input { font-size: 10px; }
+.uix-slot p, .uix-slot span, .uix-slot li { font-size: inherit; }
+
+/* 迷你页 · 页脚 */
+.uix-foot { flex: none; height: 19px; padding: 0 13px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--line); font-size: 6.5px; letter-spacing: .12em; opacity: .5; }
+
+/* 柔光跟随：静态很淡，hover 才亮起来 */
+.uix-glow { position: absolute; inset: 0; pointer-events: none; z-index: 4;
+  background: radial-gradient(190px circle at var(--mx,50%) var(--my,38%), rgba(255,255,255,.34), rgba(255,255,255,.08) 45%, transparent 72%);
+  opacity: .28; transition: opacity .35s; }
+.uix-stage:hover .uix-glow { opacity: 1; }
+
+/* 抽象封面装饰：让迷你页面不空 */
+.uix-art { position: absolute; right: -14px; top: 30px; width: 96px; height: 96px; opacity: .5; pointer-events: none; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--acc), transparent 68%); filter: blur(2px); }
+.uix-art.a1 { border-radius: 12px 60px 12px 60px; background: linear-gradient(135deg, var(--acc), transparent 75%); }
+.uix-art.a2 { border-radius: 0; background: repeating-linear-gradient(90deg, var(--acc) 0 1px, transparent 1px 9px); filter: none; opacity: .3; }
+.uix-art.a3 { border-radius: 50% 50% 8px 8px; background: conic-gradient(from 210deg, var(--acc), transparent 65%); }
+
+/* 场景卡（6 个新动效词）：完整迷你页面，不装 children */
+.uix-raw { position: relative; flex: 1; min-width: 0; display: flex; border-radius: 9px; overflow: hidden; box-shadow: 0 14px 30px rgba(15,15,30,.22); }
+.uix-scene { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 12px 14px; overflow: hidden; border-radius: 9px; color: #fff; }
+.uix-scene .uix-nav { border-color: rgba(255,255,255,.16); }
+.uix-scene .uix-brand { color: inherit; }
+.uix-scap { font-size: 8px; line-height: 1.6; opacity: .68; }
+.uix-scta { display: inline-flex; align-items: center; font-size: 8px; border: 1px solid rgba(255,255,255,.5); border-radius: 99px; padding: 5px 10px; }
+.uix-srule { height: 1px; background: rgba(255,255,255,.16); margin: 10px 0 7px; }
+.uix-sfoot { display: flex; justify-content: space-between; font-size: 7px; letter-spacing: .1em; opacity: .48; }
+
+/* 14 · 聚光灯：夜行摄影集 */
+.uix-s14 { background: linear-gradient(165deg,#24244a,#13132a 55%,#0b0b1a); }
+.uix-sky { position: absolute; inset: 0; background:
+  radial-gradient(100px 100px at 76% 20%, rgba(255,246,214,.9), rgba(255,236,180,.16) 55%, transparent 72%),
+  radial-gradient(220px 120px at 18% 92%, rgba(86,104,255,.4), transparent 70%),
+  radial-gradient(190px 110px at 84% 92%, rgba(214,96,168,.28), transparent 72%); }
+.uix-ridge { position: absolute; left: 0; right: 0; bottom: 0; height: 44%; background: linear-gradient(180deg,transparent,rgba(6,6,18,.9));
+  clip-path: polygon(0 62%,14% 44%,28% 58%,44% 30%,58% 52%,72% 34%,88% 56%,100% 42%,100% 100%,0 100%); }
+.uix-bigtitle { font-size: 25px; font-weight: 800; line-height: 1; letter-spacing: .03em; }
+.uix-bigtitle small { display: block; font-size: 8px; font-weight: 500; letter-spacing: .24em; opacity: .65; margin-top: 7px; }
+
+/* 15 · 3D 倾斜：黑胶专辑 */
+.uix-s15 { background: #fbf7ec; color: #23201a; transition: transform .35s cubic-bezier(.22,1,.36,1); }
+.uix-s15 .uix-nav { border-color: rgba(60,45,25,.15); }
+.uix-vinyl { width: 74px; height: 74px; flex: none; border-radius: 50%; background: repeating-radial-gradient(circle at 50% 50%,#1d1c1a 0 2px,#33312d 2px 3px,#1d1c1a 3px 5px);
+  box-shadow: 0 8px 16px rgba(40,30,10,.28); position: relative; }
+.uix-vinyl::after { content:""; position: absolute; inset: 27px; border-radius: 50%; background: #e8b34a; border: 3px solid #d99b32; }
+.uix-album { font-size: 15px; font-weight: 800; line-height: 1.15; }
+.uix-album small { display: block; font-size: 7px; letter-spacing: .14em; opacity: .55; margin-top: 5px; font-weight: 600; }
+.uix-tracks { font-size: 8px; line-height: 1.7; opacity: .7; margin-top: 8px; }
+.uix-play { display: inline-block; margin-top: 9px; background: #23201a; color: #fff; font-size: 8px; border-radius: 99px; padding: 5px 11px; }
+
+/* 16 · 磁吸按钮：订阅周刊 */
+.uix-s16 { background: #f4efe4; color: #2c2a22; }
+.uix-s16 .uix-nav { border-color: rgba(60,55,35,.14); }
+.uix-sbig { font-size: 27px; font-weight: 800; line-height: 1.05; margin-top: auto; letter-spacing: -.02em; }
+.uix-sbig em { font-style: normal; color: #d2653f; }
+.uix-input { flex: 1; border: 1px solid rgba(60,55,35,.22); border-radius: 5px; padding: 7px 9px; font-size: 8px; opacity: .6; }
+.uix-mag { border: 0; border-radius: 5px; background: #2c2a22; color: #fff; font-size: 8px; font-weight: 700; padding: 7px 12px; cursor: pointer;
+  transition: transform .25s cubic-bezier(.22,1,.36,1); }
+
+/* 17 · 逐行遮罩：随笔 */
+.uix-s17 { background: #fffdf7; color: #2b2a24; }
+.uix-s17 .uix-nav { border-color: rgba(60,55,35,.12); }
+.uix-line { overflow: hidden; font-size: 17px; font-weight: 800; line-height: 1.34; }
+.uix-line span { display: block; transform: translateY(0); }
+.uix-s17:hover .uix-line span { animation: uix-rise .55s cubic-bezier(.22,1,.36,1) both; }
+.uix-s17:hover .uix-line:nth-child(2) span { animation-delay: .09s; }
+.uix-s17:hover .uix-line:nth-child(3) span { animation-delay: .18s; }
+@keyframes uix-rise { from { transform: translateY(105%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.uix-line.dim { opacity: .42; }
+.uix-s17 .uix-scap { color: #2b2a24; }
+
+/* 18 · 下划线展开：文章目录 */
+.uix-s18 { background: #f6f3ec; color: #26251f; }
+.uix-s18 .uix-nav { border-color: rgba(60,55,35,.12); }
+.uix-s18 h5 { font-size: 15px; font-weight: 800; margin: 12px 0 7px; }
+.uix-s18 ul { list-style: none; margin: 0; padding: 0; }
+.uix-s18 li { display: flex; justify-content: space-between; align-items: center; font-size: 8.5px; padding: 6px 0; border-bottom: 1px solid rgba(60,55,35,.1); }
+.uix-s18 li .t { position: relative; }
+.uix-s18 li .t::after { content:""; position: absolute; left: 0; bottom: -2px; height: 1px; width: 100%; background: #c0613a;
+  transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.22,1,.36,1); }
+.uix-s18 li:hover .t::after { transform: scaleX(1); }
+.uix-s18 li .n { opacity: .45; font-size: 7.5px; }
+
+/* 19 · 错峰浮入：作品格 */
+.uix-s19 { background: #f7f5f0; color: #232420; }
+.uix-s19 .uix-nav { border-color: rgba(40,40,35,.12); }
+.uix-s19 h5 { font-size: 15px; font-weight: 800; margin: auto 0 8px; }
+.uix-tiles { display: grid; grid-template-columns: repeat(3,1fr); gap: 7px; }
+.uix-tile { opacity: 1; transform: translateY(0); }
+.uix-tile .pic { height: 42px; border-radius: 4px; background: linear-gradient(140deg,#cfd8c4,#8fa48a); }
+.uix-tile:nth-child(2) .pic { background: linear-gradient(140deg,#e9cdb4,#c68f6c); }
+.uix-tile:nth-child(3) .pic { background: linear-gradient(140deg,#b9c9dc,#6d84a8); }
+.uix-tile .t { font-size: 8px; font-weight: 700; margin-top: 5px; }
+.uix-tile .d { font-size: 7px; opacity: .55; }
+.uix-s19:hover .uix-tile { animation: uix-stagger .55s cubic-bezier(.22,1,.36,1) both; }
+.uix-s19:hover .uix-tile:nth-child(2) { animation-delay: .1s; }
+.uix-s19:hover .uix-tile:nth-child(3) { animation-delay: .2s; }
+@keyframes uix-stagger { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .uix-mini, .uix-s15, .uix-mag, .uix-s18 li .t::after { transition: none; }
+  .uix-s19:hover .uix-tile, .uix-s17:hover .uix-line span { animation: none; }
+}

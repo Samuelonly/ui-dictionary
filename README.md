@@ -1,10 +1,10 @@
 # UI 词典 · UI Dictionary
 
-**23 个词，和任何人聊 UI：程序员、设计师、拖拽建站工具、AI。**
+**33 个词，和任何人聊 UI：程序员、设计师、拖拽建站工具、AI。**
 
 一言不合就写一大段"你做一个点击后弹出来的框，没有红绿灯，不用点叉，点了别处它就消失……"？其实那一个词就说完了：**Popover**。
 
-本站是一份**可触摸的可视化词典**：每个词都配一个真的能点的 live demo。玩 30 秒，词和手感焊死在脑子里。
+本站是一份**可触摸的可视化词典**：每个词都配一个真的能点的 live demo。玩 30 秒，词和手感焊死在脑子里。桌面端三类并排三栏，手机端自动竖排——本站自己就是第 21、22 个词的实物。
 
 🔗 **在线版**：https://samuelonly.github.io/ui-dictionary/（真 shadcn/ui 组件 + 真动效）
 ⬇️ **离线版**：单文件 HTML，[点此下载](https://samuelonly.github.io/ui-dictionary/ui-dictionary-offline.html)（零依赖、断网可用、右键另存亦可）
@@ -49,7 +49,22 @@
 | Fluid / Fixed | 百分比撑满 / 写死像素 |
 | Sticky | 滚动时钉住不走的元素 |
 
-## 为什么是这 23 个词
+### ④ 实战补充词（10）
+
+| 词 | 一句话 |
+|---|---|
+| Tabs | 同一位置切换不同内容（预览/代码）|
+| Switch | 一个设置项的开/关 |
+| Checkbox | 列表里挑几项 |
+| Badge | 状态小徽标（新、热门、已废弃）|
+| Avatar | 圆形头像，加载失败显示首字母 |
+| Progress | 进度条：告诉用户"在推进，别关页"|
+| Slider | 拖动选数值（音量、透明度）|
+| Command Palette | ⌘K 呼出的搜索命令面板 |
+| Breadcrumb | 页面顶部路径条：我在哪 |
+| Empty State | 空列表别留白：图标+一句话+行动按钮 |
+
+## 为什么是这些词
 
 它们是**全行业的公共货币**：同一个 Popover，程序员在代码里叫 `<Popover />`，设计师在 Figma 里叫 Component，建站工具里叫一块，AI 听一个词就落实现——**一本词典，四张门票**。
 
@@ -66,7 +81,7 @@
 
 ## 技术说明
 
-单文件 HTML + 原生 CSS/JS，零依赖、零构建、离线可用。组件词以 [shadcn/ui](https://ui.shadcn.com) 词表为准。
+在线版：React 19 + Tailwind CSS v4 + [shadcn/ui](https://ui.shadcn.com)（Radix 行为层）构建，视觉规范对齐 shadcn 官方文档；桌面三栏自适应，手机竖排。离线版：单文件 HTML + 原生 CSS/JS，零依赖（含 23 核心词）。
 
 ---
 

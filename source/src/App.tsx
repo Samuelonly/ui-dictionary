@@ -55,36 +55,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 /* ================= 通用骨架 ================= */
 
-const APP_VERSION = "1.1.0"
 const REPO_ID = "Samuelonly/ui-dictionary"
 const REPO_URL = "https://github.com/Samuelonly/ui-dictionary"
-const ONLINE_URL = "https://samuelonly.github.io/ui-dictionary/"
-
-function CheckUpdate() {
-  const [state, setState] = useState<{ msg: string; newer?: string } | null>(null)
-  const [busy, setBusy] = useState(false)
-  const check = async () => {
-    setBusy(true)
-    try {
-      const r = await fetch(`https://samuelonly.github.io/ui-dictionary/version.json?t=${Date.now()}`)
-      const j = await r.json()
-      setState(j.version === APP_VERSION
-        ? { msg: `✓ 已是最新版本（v${j.version}）` }
-        : { msg: `↑ 发现新版本 v${j.version}，点仓库地址去拿`, newer: j.version })
-    } catch {
-      setState({ msg: "✗ 检查失败（无网络？）——直接点仓库地址看最新版" })
-    }
-    setBusy(false)
-  }
-  return (
-    <span className="inline-flex items-center gap-2">
-      <button onClick={check} disabled={busy} className="rounded-full border px-3 py-1 text-xs hover:bg-accent cursor-pointer disabled:opacity-50">
-        {busy ? "检查中…" : "🔄 检查更新"}
-      </button>
-      {state && <span className={`text-xs ${state.newer ? "text-emerald-600 font-medium" : "text-muted-foreground"}`}>{state.msg}</span>}
-    </span>
-  )
-}
 
 type Variant = { name: string; demo: React.ReactNode }
 
@@ -843,14 +815,10 @@ export default function App() {
         </main>
       </Tabs>
 
-      <footer className="border-t py-8 text-center text-sm text-muted-foreground space-y-2">
-        <p>UI 词典 v{APP_VERSION} · 46 词 = 21 组件 + 7 布局 + 13 动效 + 5 响应式 · 真 shadcn/ui + Radix 构建 · MIT</p>
+      <footer className="border-t py-8 text-center text-sm text-muted-foreground">
         <p className="text-xs">
           仓库 ID：<a className="text-violet-600 underline" href={REPO_URL} target="_blank" rel="noreferrer">{REPO_ID}</a>
-          {" · "}仓库地址：<a className="text-violet-600 underline" href={REPO_URL} target="_blank" rel="noreferrer">github.com/Samuelonly/ui-dictionary</a>
-          {" · "}在线版：<a className="text-violet-600 underline" href={ONLINE_URL}>samuelonly.github.io/ui-dictionary</a>
         </p>
-        <CheckUpdate />
       </footer>
     </div>
   )

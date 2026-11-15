@@ -2,9 +2,10 @@
 
 > 写于 2026-11-16 · v1.1.0 · 为下一个 AI 工具接力。读完这份 + 站规，你就能无损接手。
 
-## ⚠️ 接手前必读：一处未同步差异（2026-11-16 01:00）
+## ✅ 页脚已统一（2026-11-16 01:20，用户拍板 A）
 
-远端提交 `61f86e6`（作者 Samuelonly，非本会话产物）把**构建产物**里的页脚精简成「只保留仓库 ID」，移除了版本统计与检查更新——但**只改了产物（assets JS + 离线文件），没动 `source/`**。当前状态：线上页脚 = 精简版；`source/src/App.tsx` 的 footer = 完整版（含 APP_VERSION/version.json 检查更新逻辑）。接手后先向用户确认方向：**A. 保留精简页脚 → 把 source/ 的 footer 同步改掉再双构建；B. 恢复完整页脚 → 重新双构建覆盖产物**。在确认之前，不要动页脚相关代码。
+用户确认保留精简页脚：只留一行「仓库 ID：Samuelonly/ui-dictionary」。已在 `source/src/App.tsx` 删除 `APP_VERSION`、`ONLINE_URL` 常量和 `CheckUpdate` 组件，footer 同步精简；随后按下方流程完成双构建并部署在线版 + 离线单文件版。**产物与源码现已一致，不存在未同步差异，不要再为页脚向用户确认方向。**
+`version.json` 文件保留但页面已不再读取它（检查更新功能已移除）。
 
 ## 一、项目是什么
 
@@ -13,7 +14,7 @@
 - **在线版**：https://samuelonly.github.io/ui-dictionary/
 - **仓库**：https://github.com/Samuelonly/ui-dictionary（public，MIT）
 - **离线版**：`ui-dictionary-offline.html`（仓库根，734KB 单文件，**与在线版一模一样**——同一套 React 构建，vite-plugin-singlefile 全内联）
-- **版本**：v1.1.0（App 内 `APP_VERSION` 常量 + 仓库根 `version.json`，两处必须同步改）
+- **版本**：v1.1.0（仓库根 `version.json`；App 内已无版本号常量，页脚不显示版本）
 
 ## 二、源码在哪
 

@@ -53,6 +53,7 @@ import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CatContext, PrototypeStage, SCENE_COMPONENTS } from "./Prototype"
 import "./proto.css"
+import { CoverFlowSection } from "./CoverFlowSection"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 /* ================= 通用骨架 ================= */
@@ -297,7 +298,7 @@ export default function App() {
       {/* Hero */}
       <div className="py-10 text-center px-4">
         <h1 className="text-4xl font-bold tracking-tight">UI 词典</h1>
-        <p className="mt-3 text-muted-foreground">51 个词 = 21 组件 + 7 布局 + 19 动效 + 4 响应式</p>
+        <p className="mt-3 text-muted-foreground">51 个词 + 54 个 CoverFlow 编号</p>
         <p className="mt-1.5 text-xs text-muted-foreground">大 Tab 切分类 · 每类横向三列 · 编号横向走 · 页面默认待机，悬停/点击才演 · <span className="text-emerald-600">右上角「更多 N 种」= 一个词的全部效果</span></p>
       </div>
 
@@ -765,6 +766,10 @@ export default function App() {
               <Entry num={17} en="Line Mask Reveal" cn="逐行遮罩升起" def="标题一行一行从下往上升起，像被一层遮罩放出来。" note="话术：标题逐行从下往上升起" scene={SCENE_COMPONENTS[17]} />
               <Entry num={18} en="Underline Draw" cn="下划线展开" def="鼠标放上去，下划线从左边画过去。" note="话术：链接下划线从左往右画出来" scene={SCENE_COMPONENTS[18]} />
               <Entry num={19} en="Stagger Fade-up" cn="错峰淡入上移" def="一组卡片一个接一个淡入、往上浮一点。" note="话术：卡片一张接一张错开时间浮上来" scene={SCENE_COMPONENTS[19]} />
+
+              <div className="col-span-full">
+                <CoverFlowSection />
+              </div>
 
             </div>
             </CatContext.Provider>

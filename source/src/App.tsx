@@ -298,7 +298,7 @@ export default function App() {
       {/* Hero */}
       <div className="py-10 text-center px-4">
         <h1 className="text-4xl font-bold tracking-tight">UI 词典</h1>
-        <p className="mt-3 text-muted-foreground">51 个词 + 54 个 CoverFlow 编号</p>
+        <p className="mt-3 text-muted-foreground">51 个词 + 23 个场景化 CoverFlow 编号</p>
         <p className="mt-1.5 text-xs text-muted-foreground">大 Tab 切分类 · 每类横向三列 · 编号横向走 · 页面默认待机，悬停/点击才演 · <span className="text-emerald-600">右上角「更多 N 种」= 一个词的全部效果</span></p>
       </div>
 

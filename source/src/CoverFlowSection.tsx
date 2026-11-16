@@ -1,12 +1,12 @@
 import { COVERFLOWS } from "./coverflow/registry"
 
-/* 54 张 CoverFlow 卡：放进现有「③ 动效词」Tab 末尾，不新增分类、不跳页 */
+/* 23 张场景化 CoverFlow 卡：放进现有「③ 动效词」Tab 末尾，不新增分类、不跳页 */
 export function CoverFlowSection() {
   return (
     <section className="mt-12 pt-8 border-t">
       <div className="flex flex-wrap items-end justify-between gap-3 mb-2">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight">CoverFlow · 54 个封面流</h2>
+          <h2 className="text-lg font-semibold tracking-tight">CoverFlow · 23 个场景封面流</h2>
           <p className="mt-1.5 text-sm text-muted-foreground">
             每张卡就是一个编号。把编号告诉 AI，它会去仓库里读 <code className="font-mono text-[12px] rounded bg-muted px-1.5 py-0.5">source/src/coverflow/CoverFlow-编号.tsx</code>，拿到能直接复制的整份源码。
           </p>

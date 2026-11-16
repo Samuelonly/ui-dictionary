@@ -1,33 +1,33 @@
 /**
- * CoverFlow 19 · Tilting Print Cover Flow
- * 倾斜杂志印刷品流
- * 场景：一摞杂志各自歪一点，像摊在桌上的印刷品。
- * 来源：shadcnblocks.com/blocks/coverflow 编号 19 的做法，独立实现（非原版代码）。
+ * CoverFlow 19 · Velocity Cover Flow
+ * 速度感图片流
+ * 场景：横版画面带着速度线飞过，适合运动、汽车。
+ * 来源：shadcnblocks.com/blocks/coverflow 编号 47 的做法，独立实现（非原版代码）。
  * 单文件可复制：只依赖 React；封面是本地画的假图，无外链。
  */
 import { useEffect, useRef, useState } from "react"
 import type { PointerEvent as RPointerEvent, WheelEvent as RWheelEvent, ReactNode } from "react"
 
-const SHAPE: string = "magazine"
-const FAMILY: string = "drum"
+const SHAPE: string = "velocity"
+const FAMILY: string = "row"
 const INTERACTION: string = "hover"
-const STAGE: string = "#efeae2"
-const CW: number = 100
-const CH: number = 140
-const RADIUS: number = 4
-const SPACING: number = 90
-const ROT: number = 34
-const SCALE_STEP: number = 0.12
+const STAGE: string = "#0d1116"
+const CW: number = 150
+const CH: number = 90
+const RADIUS: number = 5
+const SPACING: number = 128
+const ROT: number = 0
+const SCALE_STEP: number = 0.1
 void SHAPE; void FAMILY; void INTERACTION; void STAGE; void CW; void CH; void RADIUS; void SPACING; void ROT; void SCALE_STEP
 
 type Item = { [k: string]: string }
-const ITEMS: Item[] = [{"c1": "#1a1a2e", "c2": "#4a4a6a", "art": "ring", "title": "VOGUE", "sub": "封面故事 · 春日", "meta": "NO.03"}, {"c1": "#e8d5c4", "c2": "#c89f8c", "art": "soft", "title": "ELLE", "sub": "极简生活", "meta": "NO.07"}, {"c1": "#2c3e50", "c2": "#7f8c8d", "art": "tri", "title": "GQ", "sub": "年度人物", "meta": "NO.11"}, {"c1": "#3a1c71", "c2": "#af80b6", "art": "dots", "title": "BAZAAR", "sub": "色彩的力量", "meta": "NO.05"}, {"c1": "#0f3443", "c2": "#34e89e", "art": "wave", "title": "national", "sub": "地球特辑", "meta": "NO.09"}, {"c1": "#c0392b", "c2": "#f39c12", "art": "sun", "title": "TIME", "sub": "改变世界的人", "meta": "NO.12"}, {"c1": "#34495e", "c2": "#95a5a6", "art": "city", "title": "WALLPAPER", "sub": "空间美学", "meta": "NO.02"}, {"c1": "#4a235a", "c2": "#a569bd", "art": "petal", "title": "COSMO", "sub": "City Girl", "meta": "NO.08"}]
+const ITEMS: Item[] = [{"c1": "#3a6073", "c2": "#16222a", "art": "mountain", "title": "京都", "sub": "JAPAN", "meta": "2026"}, {"c1": "#f7b733", "c2": "#fc4a1a", "art": "sun", "title": "撒哈拉", "sub": "MOROCCO", "meta": "35°C"}, {"c1": "#43cea2", "c2": "#185a9d", "art": "wave", "title": "冰岛", "sub": "ICELAND", "meta": "64°N"}, {"c1": "#c79081", "c2": "#dfa579", "art": "dune", "title": "敦煌", "sub": "CHINA", "meta": "日出"}, {"c1": "#5f72bd", "c2": "#9b23ea", "art": "dots", "title": "挪威", "sub": "NORWAY", "meta": "极夜"}, {"c1": "#ee9ca7", "c2": "#ffdde1", "art": "soft", "title": "威尼斯", "sub": "ITALY", "meta": "黄昏"}, {"c1": "#0f2027", "c2": "#203a43", "art": "mountain", "title": "阿尔卑斯", "sub": "SWISS", "meta": "云海"}, {"c1": "#d38312", "c2": "#a83279", "art": "sun", "title": "里斯本", "sub": "PORTUGAL", "meta": "电车"}]
 
 function wrap(d: number, n: number) { return ((d + n / 2) % n + n) % n - n / 2 }
 function place(i: number, n: number, off: number) {
   const d = wrap(i - off, n)
-  return {x:d*SPACING,y:0,z:-Math.abs(d)*40,ry:-d*ROT,rx:0,rz:0,
-    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.3,1-Math.abs(d)/6.5),blur:Math.min(1.2,Math.abs(d)*.18)};
+  return {x:d*SPACING,y:0,z:-Math.abs(d)*18,ry:0,rx:0,rz:0,
+    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.32,1-Math.abs(d)/6.5),blur:Math.min(1.4,Math.abs(d)*.22)};
 }
 
 /* 封面内容：场景细节长在封面里 */
@@ -47,9 +47,10 @@ function CoverArt({ it }: { it: Item }) {
     const gloss=<span style={{position:"absolute",inset:0,background:"linear-gradient(155deg,rgba(255,255,255,.28),transparent 42%,transparent 62%,rgba(0,0,0,.22))"}}/>;
     const cap=(t:string,s:string,m:string,bg:string)=><span style={{position:"absolute",left:0,right:0,bottom:0,padding:"24px 9px 9px",background:bg,color:"#fff"}}><small style={{display:"block",fontSize:6.5,letterSpacing:".14em",opacity:.78,marginBottom:2}}>{s} · {m}</small><b style={{display:"block",fontSize:12,lineHeight:1.1}}>{t}</b></span>;
     void geo; void gloss; void cap;
-    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(160deg,${it.c1},${it.c2})`}}>{geo[it.art]}{gloss}
-      <span style={{position:"absolute",left:0,right:0,top:0,padding:"10px 9px",display:"flex",justifyContent:"space-between",color:"#fff"}}><b style={{fontSize:14,letterSpacing:".06em"}}>{it.title}</b><small style={{fontSize:7,opacity:.85}}>{it.meta}</small></span>
-      <span style={{position:"absolute",left:9,bottom:11,color:"#fff",fontSize:8,letterSpacing:".08em"}}>{it.sub}</span></div>;
+    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(120deg,${it.c1},${it.c2})`}}>{geo[it.art]}
+      <span style={{position:"absolute",inset:0,background:"repeating-linear-gradient(105deg,transparent 0 16px,rgba(255,255,255,.14) 16px 18px)"}}/>
+      {gloss}<span style={{position:"absolute",left:10,top:"44%",color:"#fff",fontSize:15,fontWeight:800,letterSpacing:"-.02em"}}>{it.title}</span>
+      <span style={{position:"absolute",left:10,bottom:12,color:"rgba(255,255,255,.85)",fontSize:7,letterSpacing:".1em"}}>0—100 · 3.2s</span></div>;
 }
 
 export default function CoverFlow19() {
@@ -118,7 +119,7 @@ export default function CoverFlow19() {
           })}
         </div>
       </div>
-      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 杂志翻动</div>
+      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 画面飞过</div>
     </div>
   )
 }

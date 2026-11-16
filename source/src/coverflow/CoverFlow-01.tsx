@@ -88,6 +88,7 @@ export default function CoverFlow01() {
       onWheel={onWheel}
       style={{ position: "relative", minHeight: 244, padding: 12, borderRadius: 10, overflow: "hidden", background: STAGE, cursor: INTERACTION === "drag" ? "grab" : "default", touchAction: "none" }}
     >
+      <style>{`@keyframes cfVinylSpin{to{transform:rotate(360deg)}}`}</style>
       <div style={{ position: "relative", width: "100%", height: 220, perspective: 950, overflow: "hidden" }}>
         <div style={{ position: "absolute", left: "50%", top: "48%", width: 0, height: 0, transformStyle: "preserve-3d" }}>
           {ITEMS.map((it, i) => {
@@ -108,6 +109,7 @@ export default function CoverFlow01() {
                   WebkitBoxReflect: true ? "below 7px linear-gradient(transparent 60%,rgba(255,255,255,.22))" : undefined,
                   cursor: INTERACTION === "click" && isFocus ? "pointer" : "default",
                 }}>
+                {isFocus && <div style={{ position: "absolute", right: -42, top: -2, width: 112, height: 112, borderRadius: "50%", zIndex: 0, background: "radial-gradient(circle at center,#e08a54 0 6%,#f3b984 6% 7%,#0a0a0c 7% 8%,transparent 8%),repeating-radial-gradient(circle at center,#0b0b0d 0 2px,#1b1b1f 2px 3.4px,#0b0b0d 3.4px 5px)", border: "1px solid #2a2a30", boxShadow: "0 10px 24px rgba(0,0,0,.5)", animation: "cfVinylSpin 8s linear infinite" }}><span style={{ position: "absolute", left: "50%", top: "50%", width: 14, height: 14, borderRadius: "50%", background: "#0a0a0c", transform: "translate(-50%,-50%)", boxShadow: "0 0 0 3px #e08a54" }} /></div>}
                 <div style={{ position: "relative", width: "100%", height: "100%", transformStyle: "preserve-3d", transition: "transform 1s cubic-bezier(.22,.8,.25,1)", transform: isFlip ? "rotateY(180deg)" : "rotateY(0deg)" }}>
                   <CoverArt it={it} />
                 </div>
@@ -116,7 +118,7 @@ export default function CoverFlow01() {
           })}
         </div>
       </div>
-      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 滚轮翻动</div>
+      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 滚轮翻动 · 焦点封面后伸出旋转黑胶</div>
     </div>
   )
 }

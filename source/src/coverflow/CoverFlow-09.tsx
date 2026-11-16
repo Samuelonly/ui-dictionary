@@ -1,23 +1,23 @@
 /**
- * CoverFlow 51 · Scroll Tunnel Cover Flow
- * 滚动隧道流
- * 场景：往下滚，照片从隧道深处一张张迎面来。
- * 来源：shadcnblocks.com/blocks/coverflow 编号 51 的做法，独立实现（非原版代码）。
+ * CoverFlow 9 · Timeline Scrubber Cover Flow
+ * 时间轴照片流
+ * 场景：照片沿年份排开，下方一条时间轴拖着跳。
+ * 来源：shadcnblocks.com/blocks/coverflow 编号 12 的做法，独立实现（非原版代码）。
  * 单文件可复制：只依赖 React；封面是本地画的假图，无外链。
  */
 import { useEffect, useRef, useState } from "react"
 import type { PointerEvent as RPointerEvent, WheelEvent as RWheelEvent, ReactNode } from "react"
 
 const SHAPE: string = "photo"
-const FAMILY: string = "tunnel"
-const INTERACTION: string = "scroll"
-const STAGE: string = "#0f1116"
-const CW: number = 108
-const CH: number = 108
+const FAMILY: string = "row"
+const INTERACTION: string = "hover"
+const STAGE: string = "#1b1b24"
+const CW: number = 124
+const CH: number = 110
 const RADIUS: number = 6
-const SPACING: number = 70
+const SPACING: number = 110
 const ROT: number = 0
-const SCALE_STEP: number = 0.13
+const SCALE_STEP: number = 0.12
 void SHAPE; void FAMILY; void INTERACTION; void STAGE; void CW; void CH; void RADIUS; void SPACING; void ROT; void SCALE_STEP
 
 type Item = { [k: string]: string }
@@ -26,8 +26,8 @@ const ITEMS: Item[] = [{"c1": "#3a6073", "c2": "#16222a", "art": "mountain", "ti
 function wrap(d: number, n: number) { return ((d + n / 2) % n + n) % n - n / 2 }
 function place(i: number, n: number, off: number) {
   const d = wrap(i - off, n)
-  return {x:Math.sin(d*.7)*SPACING*.32,y:Math.cos(d*.7)*14,z:-Math.abs(d)*78,ry:0,rx:0,rz:0,
-    sc:Math.max(.28,1-Math.abs(d)*SCALE_STEP),op:Math.max(.22,1-Math.abs(d)/6),blur:Math.min(1.6,Math.abs(d)*.24)};
+  return {x:d*SPACING,y:0,z:-Math.abs(d)*18,ry:0,rx:0,rz:0,
+    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.32,1-Math.abs(d)/6.5),blur:Math.min(1.4,Math.abs(d)*.22)};
 }
 
 /* 封面内容：场景细节长在封面里 */
@@ -50,7 +50,7 @@ function CoverArt({ it }: { it: Item }) {
     return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(160deg,${it.c1},${it.c2})`}}>{geo[it.art]}{gloss}{cap(it.title,it.sub,it.meta,"linear-gradient(transparent,rgba(6,8,16,.8))")}</div>;
 }
 
-export default function CoverFlow51() {
+export default function CoverFlow09() {
   const [off, setOff] = useState(0)
   const [hover, setHover] = useState(false)
   const [flipped, setFlipped] = useState<number | null>(null)
@@ -116,7 +116,7 @@ export default function CoverFlow51() {
           })}
         </div>
       </div>
-      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>滚动 → 迎面推进</div>
+      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 年份切换</div>
     </div>
   )
 }

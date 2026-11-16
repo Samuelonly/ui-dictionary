@@ -1,22 +1,22 @@
 /**
- * CoverFlow 20 · Elastic Drag Cover Flow
- * 弹性拖拽图片流
- * 场景：照片能拖着走，松手会慢慢弹回来。
- * 来源：shadcnblocks.com/blocks/coverflow 编号 20 的做法，独立实现（非原版代码）。
+ * CoverFlow 20 · Edge-On Cover Flow
+ * 侧立卡片流
+ * 场景：卡片几乎侧着身子排，焦点那张才转正。
+ * 来源：shadcnblocks.com/blocks/coverflow 编号 48 的做法，独立实现（非原版代码）。
  * 单文件可复制：只依赖 React；封面是本地画的假图，无外链。
  */
 import { useEffect, useRef, useState } from "react"
 import type { PointerEvent as RPointerEvent, WheelEvent as RWheelEvent, ReactNode } from "react"
 
 const SHAPE: string = "photo"
-const FAMILY: string = "drum"
-const INTERACTION: string = "drag"
-const STAGE: string = "#16161f"
-const CW: number = 116
-const CH: number = 116
-const RADIUS: number = 7
-const SPACING: number = 100
-const ROT: number = 38
+const FAMILY: string = "edge"
+const INTERACTION: string = "hover"
+const STAGE: string = "#15151d"
+const CW: number = 112
+const CH: number = 112
+const RADIUS: number = 6
+const SPACING: number = 86
+const ROT: number = 74
 const SCALE_STEP: number = 0.12
 void SHAPE; void FAMILY; void INTERACTION; void STAGE; void CW; void CH; void RADIUS; void SPACING; void ROT; void SCALE_STEP
 
@@ -26,8 +26,8 @@ const ITEMS: Item[] = [{"c1": "#3a6073", "c2": "#16222a", "art": "mountain", "ti
 function wrap(d: number, n: number) { return ((d + n / 2) % n + n) % n - n / 2 }
 function place(i: number, n: number, off: number) {
   const d = wrap(i - off, n)
-  return {x:d*SPACING,y:0,z:-Math.abs(d)*40,ry:-d*ROT,rx:0,rz:0,
-    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.3,1-Math.abs(d)/6.5),blur:Math.min(1.2,Math.abs(d)*.18)};
+  return {x:d*SPACING,y:0,z:-Math.abs(d)*26,ry:Math.abs(d)<.5?0:-ROT,rx:0,rz:0,
+    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.3,1-Math.abs(d)/6.5),blur:Math.min(1,Math.abs(d)*.18)};
 }
 
 /* 封面内容：场景细节长在封面里 */
@@ -116,7 +116,7 @@ export default function CoverFlow20() {
           })}
         </div>
       </div>
-      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>按住拖动 → 松手回弹</div>
+      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 卡片转正</div>
     </div>
   )
 }

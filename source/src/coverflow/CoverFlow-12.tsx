@@ -1,8 +1,8 @@
 /**
- * CoverFlow 12 · Timeline Scrubber Cover Flow
- * 时间轴照片流
- * 场景：照片沿年份排开，下方一条时间轴拖着跳。
- * 来源：shadcnblocks.com/blocks/coverflow 编号 12 的做法，独立实现（非原版代码）。
+ * CoverFlow 12 · Soft Focus Autoplay Row
+ * 柔焦摄影作品行
+ * 场景：横版照片一字排开，远处的自己虚掉，焦点最清楚。
+ * 来源：shadcnblocks.com/blocks/coverflow 编号 16 的做法，独立实现（非原版代码）。
  * 单文件可复制：只依赖 React；封面是本地画的假图，无外链。
  */
 import { useEffect, useRef, useState } from "react"
@@ -11,13 +11,13 @@ import type { PointerEvent as RPointerEvent, WheelEvent as RWheelEvent, ReactNod
 const SHAPE: string = "photo"
 const FAMILY: string = "row"
 const INTERACTION: string = "hover"
-const STAGE: string = "#1b1b24"
-const CW: number = 124
-const CH: number = 110
+const STAGE: string = "#121418"
+const CW: number = 150
+const CH: number = 92
 const RADIUS: number = 6
-const SPACING: number = 110
+const SPACING: number = 120
 const ROT: number = 0
-const SCALE_STEP: number = 0.12
+const SCALE_STEP: number = 0.1
 void SHAPE; void FAMILY; void INTERACTION; void STAGE; void CW; void CH; void RADIUS; void SPACING; void ROT; void SCALE_STEP
 
 type Item = { [k: string]: string }
@@ -116,7 +116,7 @@ export default function CoverFlow12() {
           })}
         </div>
       </div>
-      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 年份切换</div>
+      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 焦点移动</div>
     </div>
   )
 }

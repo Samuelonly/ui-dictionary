@@ -1,33 +1,33 @@
 /**
- * CoverFlow 23 · Autoplay Lookbook Cover Flow
- * 时装造型册流
- * 场景：一页页造型图慢慢翻过去，带 LOOK 编号。
- * 来源：shadcnblocks.com/blocks/coverflow 编号 23 的做法，独立实现（非原版代码）。
+ * CoverFlow 23 · Scroll Tunnel Cover Flow
+ * 滚动隧道流
+ * 场景：往下滚，照片从隧道深处一张张迎面来。
+ * 来源：shadcnblocks.com/blocks/coverflow 编号 51 的做法，独立实现（非原版代码）。
  * 单文件可复制：只依赖 React；封面是本地画的假图，无外链。
  */
 import { useEffect, useRef, useState } from "react"
 import type { PointerEvent as RPointerEvent, WheelEvent as RWheelEvent, ReactNode } from "react"
 
-const SHAPE: string = "lookbook"
-const FAMILY: string = "drum"
-const INTERACTION: string = "hover"
-const STAGE: string = "#efe9ec"
-const CW: number = 100
-const CH: number = 142
+const SHAPE: string = "photo"
+const FAMILY: string = "tunnel"
+const INTERACTION: string = "scroll"
+const STAGE: string = "#0f1116"
+const CW: number = 108
+const CH: number = 108
 const RADIUS: number = 6
-const SPACING: number = 88
-const ROT: number = 30
-const SCALE_STEP: number = 0.12
+const SPACING: number = 70
+const ROT: number = 0
+const SCALE_STEP: number = 0.13
 void SHAPE; void FAMILY; void INTERACTION; void STAGE; void CW; void CH; void RADIUS; void SPACING; void ROT; void SCALE_STEP
 
 type Item = { [k: string]: string }
-const ITEMS: Item[] = [{"c1": "#d9a7c7", "c2": "#fffcdc", "art": "soft", "title": "早春系列", "sub": "LOOK 01", "meta": "女装"}, {"c1": "#2c3e50", "c2": "#3498db", "art": "city", "title": "都市通勤", "sub": "LOOK 02", "meta": "男装"}, {"c1": "#f5f7fa", "c2": "#c3cfe2", "art": "ring", "title": "极简白", "sub": "LOOK 03", "meta": "女装"}, {"c1": "#8e2de2", "c2": "#4a00e0", "art": "dots", "title": "夜行", "sub": "LOOK 04", "meta": "联名"}, {"c1": "#f2994a", "c2": "#f2c94c", "art": "sun", "title": "假日", "sub": "LOOK 05", "meta": "度假"}, {"c1": "#11998e", "c2": "#38ef7d", "art": "wave", "title": "运动", "sub": "LOOK 06", "meta": "机能"}, {"c1": "#232526", "c2": "#414345", "art": "tri", "title": "暗黑", "sub": "LOOK 07", "meta": "高街"}, {"c1": "#ee9ca7", "c2": "#ffdde1", "art": "petal", "title": "浪漫", "sub": "LOOK 08", "meta": "女装"}]
+const ITEMS: Item[] = [{"c1": "#3a6073", "c2": "#16222a", "art": "mountain", "title": "京都", "sub": "JAPAN", "meta": "2026"}, {"c1": "#f7b733", "c2": "#fc4a1a", "art": "sun", "title": "撒哈拉", "sub": "MOROCCO", "meta": "35°C"}, {"c1": "#43cea2", "c2": "#185a9d", "art": "wave", "title": "冰岛", "sub": "ICELAND", "meta": "64°N"}, {"c1": "#c79081", "c2": "#dfa579", "art": "dune", "title": "敦煌", "sub": "CHINA", "meta": "日出"}, {"c1": "#5f72bd", "c2": "#9b23ea", "art": "dots", "title": "挪威", "sub": "NORWAY", "meta": "极夜"}, {"c1": "#ee9ca7", "c2": "#ffdde1", "art": "soft", "title": "威尼斯", "sub": "ITALY", "meta": "黄昏"}, {"c1": "#0f2027", "c2": "#203a43", "art": "mountain", "title": "阿尔卑斯", "sub": "SWISS", "meta": "云海"}, {"c1": "#d38312", "c2": "#a83279", "art": "sun", "title": "里斯本", "sub": "PORTUGAL", "meta": "电车"}]
 
 function wrap(d: number, n: number) { return ((d + n / 2) % n + n) % n - n / 2 }
 function place(i: number, n: number, off: number) {
   const d = wrap(i - off, n)
-  return {x:d*SPACING,y:0,z:-Math.abs(d)*40,ry:-d*ROT,rx:0,rz:0,
-    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.3,1-Math.abs(d)/6.5),blur:Math.min(1.2,Math.abs(d)*.18)};
+  return {x:Math.sin(d*.7)*SPACING*.32,y:Math.cos(d*.7)*14,z:-Math.abs(d)*78,ry:0,rx:0,rz:0,
+    sc:Math.max(.28,1-Math.abs(d)*SCALE_STEP),op:Math.max(.22,1-Math.abs(d)/6),blur:Math.min(1.6,Math.abs(d)*.24)};
 }
 
 /* 封面内容：场景细节长在封面里 */
@@ -47,11 +47,7 @@ function CoverArt({ it }: { it: Item }) {
     const gloss=<span style={{position:"absolute",inset:0,background:"linear-gradient(155deg,rgba(255,255,255,.28),transparent 42%,transparent 62%,rgba(0,0,0,.22))"}}/>;
     const cap=(t:string,s:string,m:string,bg:string)=><span style={{position:"absolute",left:0,right:0,bottom:0,padding:"24px 9px 9px",background:bg,color:"#fff"}}><small style={{display:"block",fontSize:6.5,letterSpacing:".14em",opacity:.78,marginBottom:2}}>{s} · {m}</small><b style={{display:"block",fontSize:12,lineHeight:1.1}}>{t}</b></span>;
     void geo; void gloss; void cap;
-    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(160deg,${it.c1},${it.c2})`}}>
-      <span style={{position:"absolute",left:"50%",bottom:"-8%",width:"62%",height:"72%",borderRadius:"46% 46% 0 0",background:"rgba(0,0,0,.22)",transform:"translateX(-50%)"}}/>
-      <span style={{position:"absolute",left:"50%",top:"26%",width:26,height:26,borderRadius:"50%",background:"rgba(0,0,0,.28)",transform:"translateX(-50%)"}}/>{gloss}
-      <span style={{position:"absolute",left:0,right:0,top:0,padding:"10px 8px",color:"rgba(255,255,255,.9)",fontSize:6.5,letterSpacing:".2em"}}>LOOKBOOK 26</span>
-      <span style={{position:"absolute",left:0,right:0,bottom:0,padding:"26px 9px 10px",background:"linear-gradient(transparent,rgba(10,8,12,.7))",color:"#fff"}}><small style={{fontSize:7,letterSpacing:".14em"}}>{it.sub}</small><b style={{display:"block",fontSize:12,marginTop:2}}>{it.title}</b></span></div>;
+    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(160deg,${it.c1},${it.c2})`}}>{geo[it.art]}{gloss}{cap(it.title,it.sub,it.meta,"linear-gradient(transparent,rgba(6,8,16,.8))")}</div>;
 }
 
 export default function CoverFlow23() {
@@ -120,7 +116,7 @@ export default function CoverFlow23() {
           })}
         </div>
       </div>
-      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 造型翻页</div>
+      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>滚动 → 迎面推进</div>
     </div>
   )
 }

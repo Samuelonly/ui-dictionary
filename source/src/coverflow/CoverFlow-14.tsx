@@ -1,27 +1,27 @@
 /**
- * CoverFlow 14 · Product Cover Flow With Sizes
- * 多尺寸商品流
- * 场景：同一类商品按大小排开，中间大两边小，带价格。
- * 来源：shadcnblocks.com/blocks/coverflow 编号 14 的做法，独立实现（非原版代码）。
+ * CoverFlow 14 · Tilting Print Cover Flow
+ * 倾斜杂志印刷品流
+ * 场景：一摞杂志各自歪一点，像摊在桌上的印刷品。
+ * 来源：shadcnblocks.com/blocks/coverflow 编号 19 的做法，独立实现（非原版代码）。
  * 单文件可复制：只依赖 React；封面是本地画的假图，无外链。
  */
 import { useEffect, useRef, useState } from "react"
 import type { PointerEvent as RPointerEvent, WheelEvent as RWheelEvent, ReactNode } from "react"
 
-const SHAPE: string = "product"
+const SHAPE: string = "magazine"
 const FAMILY: string = "drum"
 const INTERACTION: string = "hover"
-const STAGE: string = "#f5f4f0"
-const CW: number = 124
-const CH: number = 124
-const RADIUS: number = 8
-const SPACING: number = 96
-const ROT: number = 32
-const SCALE_STEP: number = 0.13
+const STAGE: string = "#efeae2"
+const CW: number = 100
+const CH: number = 140
+const RADIUS: number = 4
+const SPACING: number = 90
+const ROT: number = 34
+const SCALE_STEP: number = 0.12
 void SHAPE; void FAMILY; void INTERACTION; void STAGE; void CW; void CH; void RADIUS; void SPACING; void ROT; void SCALE_STEP
 
 type Item = { [k: string]: string }
-const ITEMS: Item[] = [{"c1": "#eef1f6", "c2": "#dfe4ee", "art": "headphone", "title": "降噪耳机 Pro", "sub": "音频", "meta": "黑色", "price": "¥1,299", "badge": "新品"}, {"c1": "#f6efe8", "c2": "#e8dccb", "art": "shoe", "title": "轻量跑鞋 2", "sub": "运动", "meta": "42 码", "price": "¥699", "badge": "热卖"}, {"c1": "#eef2f6", "c2": "#dbe3ec", "art": "watch", "title": "智能手表 S", "sub": "穿戴", "meta": "银色", "price": "¥2,399", "badge": ""}, {"c1": "#f3eef6", "c2": "#e4d9ee", "art": "bag", "title": "通勤托特包", "sub": "箱包", "meta": "米白", "price": "¥459", "badge": ""}, {"c1": "#eef4f1", "c2": "#d8e6df", "art": "camera", "title": "复古相机 M", "sub": "影像", "meta": "银黑", "price": "¥3,899", "badge": "限量"}, {"c1": "#f6f1ee", "c2": "#eadfd8", "art": "chair", "title": "人体工学椅", "sub": "家居", "meta": "灰色", "price": "¥1,899", "badge": ""}, {"c1": "#eef1f6", "c2": "#dce2ea", "art": "lamp", "title": "护眼台灯", "sub": "家居", "meta": "白色", "price": "¥329", "badge": ""}, {"c1": "#f4eef0", "c2": "#e8dbe1", "art": "bottle", "title": "保温随行杯", "sub": "生活", "meta": "500ml", "price": "¥159", "badge": ""}]
+const ITEMS: Item[] = [{"c1": "#1a1a2e", "c2": "#4a4a6a", "art": "ring", "title": "VOGUE", "sub": "封面故事 · 春日", "meta": "NO.03"}, {"c1": "#e8d5c4", "c2": "#c89f8c", "art": "soft", "title": "ELLE", "sub": "极简生活", "meta": "NO.07"}, {"c1": "#2c3e50", "c2": "#7f8c8d", "art": "tri", "title": "GQ", "sub": "年度人物", "meta": "NO.11"}, {"c1": "#3a1c71", "c2": "#af80b6", "art": "dots", "title": "BAZAAR", "sub": "色彩的力量", "meta": "NO.05"}, {"c1": "#0f3443", "c2": "#34e89e", "art": "wave", "title": "national", "sub": "地球特辑", "meta": "NO.09"}, {"c1": "#c0392b", "c2": "#f39c12", "art": "sun", "title": "TIME", "sub": "改变世界的人", "meta": "NO.12"}, {"c1": "#34495e", "c2": "#95a5a6", "art": "city", "title": "WALLPAPER", "sub": "空间美学", "meta": "NO.02"}, {"c1": "#4a235a", "c2": "#a569bd", "art": "petal", "title": "COSMO", "sub": "City Girl", "meta": "NO.08"}]
 
 function wrap(d: number, n: number) { return ((d + n / 2) % n + n) % n - n / 2 }
 function place(i: number, n: number, off: number) {
@@ -47,24 +47,9 @@ function CoverArt({ it }: { it: Item }) {
     const gloss=<span style={{position:"absolute",inset:0,background:"linear-gradient(155deg,rgba(255,255,255,.28),transparent 42%,transparent 62%,rgba(0,0,0,.22))"}}/>;
     const cap=(t:string,s:string,m:string,bg:string)=><span style={{position:"absolute",left:0,right:0,bottom:0,padding:"24px 9px 9px",background:bg,color:"#fff"}}><small style={{display:"block",fontSize:6.5,letterSpacing:".14em",opacity:.78,marginBottom:2}}>{s} · {m}</small><b style={{display:"block",fontSize:12,lineHeight:1.1}}>{t}</b></span>;
     void geo; void gloss; void cap;
-    const shapes:Record<string,React.ReactNode>={
-      headphone:<span style={{position:"absolute",left:"50%",top:"40%",width:56,height:44,border:"9px solid #3f4a5a",borderBottom:"none",borderRadius:"30px 30px 0 0",transform:"translate(-50%,-50%)"}}/>,
-      shoe:<span style={{position:"absolute",left:"50%",top:"46%",width:66,height:26,background:"#9aa7b8",borderRadius:"30px 12px 12px 14px",transform:"translate(-50%,-50%) rotate(-8deg)"}}/>,
-      watch:<span style={{position:"absolute",left:"50%",top:"44%",width:38,height:38,background:"#374151",borderRadius:10,transform:"translate(-50%,-50%)"}}/>,
-      bag:<span style={{position:"absolute",left:"50%",top:"46%",width:50,height:40,background:"#cbb79f",borderRadius:"8px 8px 12px 12px",transform:"translate(-50%,-50%)"}}/>,
-      camera:<span style={{position:"absolute",left:"50%",top:"46%",width:54,height:36,background:"#2f3640",borderRadius:8,transform:"translate(-50%,-50%)"}}/>,
-      chair:<span style={{position:"absolute",left:"50%",top:"46%",width:46,height:50,background:"#7b8794",borderRadius:"12px 12px 6px 6px",transform:"translate(-50%,-50%)"}}/>,
-      lamp:<span style={{position:"absolute",left:"50%",top:"44%",width:44,height:34,background:"#e8e2cf",borderRadius:"50% 50% 8px 8px",transform:"translate(-50%,-50%)"}}/>,
-      bottle:<span style={{position:"absolute",left:"50%",top:"46%",width:28,height:52,background:"#b9c5cf",borderRadius:"8px 8px 12px 12px",transform:"translate(-50%,-50%)"}}/>,
-    };
-    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(160deg,${it.c1},${it.c2})`}}>
-      {it.badge&&<span style={{position:"absolute",right:7,top:7,background:"#e11d48",color:"#fff",fontSize:6.5,padding:"2px 6px",borderRadius:99}}>{it.badge}</span>}
-      {shapes[it.art]}
-      <span style={{position:"absolute",left:0,right:0,bottom:0,padding:"26px 9px 9px",background:"linear-gradient(transparent,rgba(255,255,255,.96) 58%)",color:"#1f2937"}}>
-        <small style={{display:"block",fontSize:6.5,color:"#6b7280"}}>{it.sub} · {it.meta}</small>
-        <b style={{display:"block",fontSize:10,lineHeight:1.15}}>{it.title}</b>
-        <span style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:4}}><b style={{fontSize:12,color:"#e11d48"}}>{it.price}</b><span style={{fontSize:6.5,background:"#1f2937",color:"#fff",padding:"4px 8px",borderRadius:99}}>加购</span></span>
-      </span></div>;
+    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(160deg,${it.c1},${it.c2})`}}>{geo[it.art]}{gloss}
+      <span style={{position:"absolute",left:0,right:0,top:0,padding:"10px 9px",display:"flex",justifyContent:"space-between",color:"#fff"}}><b style={{fontSize:14,letterSpacing:".06em"}}>{it.title}</b><small style={{fontSize:7,opacity:.85}}>{it.meta}</small></span>
+      <span style={{position:"absolute",left:9,bottom:11,color:"#fff",fontSize:8,letterSpacing:".08em"}}>{it.sub}</span></div>;
 }
 
 export default function CoverFlow14() {
@@ -133,7 +118,7 @@ export default function CoverFlow14() {
           })}
         </div>
       </div>
-      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 滚轮翻动</div>
+      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 杂志翻动</div>
     </div>
   )
 }

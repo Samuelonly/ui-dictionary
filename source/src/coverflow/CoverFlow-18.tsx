@@ -1,33 +1,33 @@
 /**
- * CoverFlow 18 · Fullscreen Cover Flow Hero
- * 全屏封面主视觉
- * 场景：大图铺满，标题和按钮压在上面，像网站首屏。
- * 来源：shadcnblocks.com/blocks/coverflow 编号 18 的做法，独立实现（非原版代码）。
+ * CoverFlow 18 · Tunnel Cover Flow
+ * 隧道图片流
+ * 场景：照片一层层往里退，越远越小，像望进隧道。
+ * 来源：shadcnblocks.com/blocks/coverflow 编号 29 的做法，独立实现（非原版代码）。
  * 单文件可复制：只依赖 React；封面是本地画的假图，无外链。
  */
 import { useEffect, useRef, useState } from "react"
 import type { PointerEvent as RPointerEvent, WheelEvent as RWheelEvent, ReactNode } from "react"
 
-const SHAPE: string = "hero"
-const FAMILY: string = "row"
+const SHAPE: string = "photo"
+const FAMILY: string = "tunnel"
 const INTERACTION: string = "hover"
-const STAGE: string = "#101418"
-const CW: number = 196
-const CH: number = 92
+const STAGE: string = "#101217"
+const CW: number = 108
+const CH: number = 108
 const RADIUS: number = 6
-const SPACING: number = 150
+const SPACING: number = 70
 const ROT: number = 0
-const SCALE_STEP: number = 0.1
+const SCALE_STEP: number = 0.13
 void SHAPE; void FAMILY; void INTERACTION; void STAGE; void CW; void CH; void RADIUS; void SPACING; void ROT; void SCALE_STEP
 
 type Item = { [k: string]: string }
-const ITEMS: Item[] = [{"c1": "#141e30", "c2": "#243b55", "art": "city", "title": "星际回响", "sub": "科幻 · 剧情", "meta": "8.7"}, {"c1": "#3a1c71", "c2": "#d76d77", "art": "ring", "title": "日落之前", "sub": "爱情 · 剧情", "meta": "8.2"}, {"c1": "#0f2027", "c2": "#2c5364", "art": "wave", "title": "深潜", "sub": "冒险 · 动作", "meta": "7.9"}, {"c1": "#42275a", "c2": "#734b6d", "art": "dots", "title": "记忆碎片", "sub": "悬疑 · 惊悚", "meta": "8.9"}, {"c1": "#c31432", "c2": "#240b36", "art": "sun", "title": "燃情岁月", "sub": "剧情 · 传记", "meta": "8.4"}, {"c1": "#1d2b64", "c2": "#f8cdda", "art": "soft", "title": "蓝色黄昏", "sub": "文艺 · 短片", "meta": "7.6"}, {"c1": "#232526", "c2": "#414345", "art": "tri", "title": "暗涌", "sub": "犯罪 · 悬疑", "meta": "8.1"}, {"c1": "#f2994a", "c2": "#2c2c54", "art": "mountain", "title": "沙丘之上", "sub": "史诗 · 科幻", "meta": "8.6"}]
+const ITEMS: Item[] = [{"c1": "#3a6073", "c2": "#16222a", "art": "mountain", "title": "京都", "sub": "JAPAN", "meta": "2026"}, {"c1": "#f7b733", "c2": "#fc4a1a", "art": "sun", "title": "撒哈拉", "sub": "MOROCCO", "meta": "35°C"}, {"c1": "#43cea2", "c2": "#185a9d", "art": "wave", "title": "冰岛", "sub": "ICELAND", "meta": "64°N"}, {"c1": "#c79081", "c2": "#dfa579", "art": "dune", "title": "敦煌", "sub": "CHINA", "meta": "日出"}, {"c1": "#5f72bd", "c2": "#9b23ea", "art": "dots", "title": "挪威", "sub": "NORWAY", "meta": "极夜"}, {"c1": "#ee9ca7", "c2": "#ffdde1", "art": "soft", "title": "威尼斯", "sub": "ITALY", "meta": "黄昏"}, {"c1": "#0f2027", "c2": "#203a43", "art": "mountain", "title": "阿尔卑斯", "sub": "SWISS", "meta": "云海"}, {"c1": "#d38312", "c2": "#a83279", "art": "sun", "title": "里斯本", "sub": "PORTUGAL", "meta": "电车"}]
 
 function wrap(d: number, n: number) { return ((d + n / 2) % n + n) % n - n / 2 }
 function place(i: number, n: number, off: number) {
   const d = wrap(i - off, n)
-  return {x:d*SPACING,y:0,z:-Math.abs(d)*18,ry:0,rx:0,rz:0,
-    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.32,1-Math.abs(d)/6.5),blur:Math.min(1.4,Math.abs(d)*.22)};
+  return {x:Math.sin(d*.7)*SPACING*.32,y:Math.cos(d*.7)*14,z:-Math.abs(d)*78,ry:0,rx:0,rz:0,
+    sc:Math.max(.28,1-Math.abs(d)*SCALE_STEP),op:Math.max(.22,1-Math.abs(d)/6),blur:Math.min(1.6,Math.abs(d)*.24)};
 }
 
 /* 封面内容：场景细节长在封面里 */
@@ -47,9 +47,7 @@ function CoverArt({ it }: { it: Item }) {
     const gloss=<span style={{position:"absolute",inset:0,background:"linear-gradient(155deg,rgba(255,255,255,.28),transparent 42%,transparent 62%,rgba(0,0,0,.22))"}}/>;
     const cap=(t:string,s:string,m:string,bg:string)=><span style={{position:"absolute",left:0,right:0,bottom:0,padding:"24px 9px 9px",background:bg,color:"#fff"}}><small style={{display:"block",fontSize:6.5,letterSpacing:".14em",opacity:.78,marginBottom:2}}>{s} · {m}</small><b style={{display:"block",fontSize:12,lineHeight:1.1}}>{t}</b></span>;
     void geo; void gloss; void cap;
-    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(115deg,${it.c1},${it.c2})`}}>{geo[it.art]}{gloss}
-      <span style={{position:"absolute",left:14,top:"30%",color:"#fff"}}><small style={{display:"block",fontSize:7,letterSpacing:".2em",opacity:.8}}>{it.sub}</small><b style={{display:"block",fontSize:20,lineHeight:1.05,marginTop:4,letterSpacing:"-.03em"}}>{it.title}</b>
-      <span style={{display:"inline-block",marginTop:10,fontSize:7.5,background:"#fff",color:"#111",padding:"5px 12px",borderRadius:99}}>了解更多 →</span></span></div>;
+    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(160deg,${it.c1},${it.c2})`}}>{geo[it.art]}{gloss}{cap(it.title,it.sub,it.meta,"linear-gradient(transparent,rgba(6,8,16,.8))")}</div>;
 }
 
 export default function CoverFlow18() {
@@ -118,7 +116,7 @@ export default function CoverFlow18() {
           })}
         </div>
       </div>
-      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 主视觉切换</div>
+      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 隧道推进</div>
     </div>
   )
 }

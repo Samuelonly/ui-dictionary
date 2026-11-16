@@ -1,23 +1,23 @@
 /**
- * CoverFlow 16 · Soft Focus Autoplay Row
- * 柔焦摄影作品行
- * 场景：横版照片一字排开，远处的自己虚掉，焦点最清楚。
- * 来源：shadcnblocks.com/blocks/coverflow 编号 16 的做法，独立实现（非原版代码）。
+ * CoverFlow 16 · Concave Perspective Carousel
+ * 凹面透视图片流
+ * 场景：照片排成往里凹的弧，中间远、两边近。
+ * 来源：shadcnblocks.com/blocks/coverflow 编号 21 的做法，独立实现（非原版代码）。
  * 单文件可复制：只依赖 React；封面是本地画的假图，无外链。
  */
 import { useEffect, useRef, useState } from "react"
 import type { PointerEvent as RPointerEvent, WheelEvent as RWheelEvent, ReactNode } from "react"
 
 const SHAPE: string = "photo"
-const FAMILY: string = "row"
+const FAMILY: string = "arc"
 const INTERACTION: string = "hover"
-const STAGE: string = "#121418"
-const CW: number = 150
-const CH: number = 92
+const STAGE: string = "#141821"
+const CW: number = 116
+const CH: number = 116
 const RADIUS: number = 6
-const SPACING: number = 120
-const ROT: number = 0
-const SCALE_STEP: number = 0.1
+const SPACING: number = 102
+const ROT: number = -22
+const SCALE_STEP: number = 0.11
 void SHAPE; void FAMILY; void INTERACTION; void STAGE; void CW; void CH; void RADIUS; void SPACING; void ROT; void SCALE_STEP
 
 type Item = { [k: string]: string }
@@ -26,8 +26,8 @@ const ITEMS: Item[] = [{"c1": "#3a6073", "c2": "#16222a", "art": "mountain", "ti
 function wrap(d: number, n: number) { return ((d + n / 2) % n + n) % n - n / 2 }
 function place(i: number, n: number, off: number) {
   const d = wrap(i - off, n)
-  return {x:d*SPACING,y:0,z:-Math.abs(d)*18,ry:0,rx:0,rz:0,
-    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.32,1-Math.abs(d)/6.5),blur:Math.min(1.4,Math.abs(d)*.22)};
+  return {x:d*SPACING,y:Math.pow(Math.abs(d),2)*3.4,z:-Math.abs(d)*22,ry:-d*ROT,rx:0,rz:0,
+    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.3,1-Math.abs(d)/6.5),blur:Math.min(1.1,Math.abs(d)*.18)};
 }
 
 /* 封面内容：场景细节长在封面里 */
@@ -116,7 +116,7 @@ export default function CoverFlow16() {
           })}
         </div>
       </div>
-      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 焦点移动</div>
+      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 沿凹面滑</div>
     </div>
   )
 }

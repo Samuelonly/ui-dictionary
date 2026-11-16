@@ -1,23 +1,23 @@
 /**
- * CoverFlow 49 · Panorama Cover Flow
- * 全景长卷流
- * 场景：风景照片一字铺开，像在看一幅长卷。
- * 来源：shadcnblocks.com/blocks/coverflow 编号 49 的做法，独立实现（非原版代码）。
+ * CoverFlow 22 · Pleated Drum Cover Flow
+ * 褶皱鼓形图片流
+ * 场景：鼓形环上一张深一张浅，像打了褶的图片带。
+ * 来源：shadcnblocks.com/blocks/coverflow 编号 50 的做法，独立实现（非原版代码）。
  * 单文件可复制：只依赖 React；封面是本地画的假图，无外链。
  */
 import { useEffect, useRef, useState } from "react"
 import type { PointerEvent as RPointerEvent, WheelEvent as RWheelEvent, ReactNode } from "react"
 
-const SHAPE: string = "panorama"
-const FAMILY: string = "row"
+const SHAPE: string = "photo"
+const FAMILY: string = "drum"
 const INTERACTION: string = "hover"
-const STAGE: string = "#0f1216"
-const CW: number = 196
-const CH: number = 84
-const RADIUS: number = 5
-const SPACING: number = 150
-const ROT: number = 0
-const SCALE_STEP: number = 0.09
+const STAGE: string = "#16161f"
+const CW: number = 112
+const CH: number = 112
+const RADIUS: number = 7
+const SPACING: number = 94
+const ROT: number = 40
+const SCALE_STEP: number = 0.13
 void SHAPE; void FAMILY; void INTERACTION; void STAGE; void CW; void CH; void RADIUS; void SPACING; void ROT; void SCALE_STEP
 
 type Item = { [k: string]: string }
@@ -26,8 +26,8 @@ const ITEMS: Item[] = [{"c1": "#3a6073", "c2": "#16222a", "art": "mountain", "ti
 function wrap(d: number, n: number) { return ((d + n / 2) % n + n) % n - n / 2 }
 function place(i: number, n: number, off: number) {
   const d = wrap(i - off, n)
-  return {x:d*SPACING,y:0,z:-Math.abs(d)*18,ry:0,rx:0,rz:0,
-    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.32,1-Math.abs(d)/6.5),blur:Math.min(1.4,Math.abs(d)*.22)};
+  return {x:d*SPACING,y:0,z:-Math.abs(d)*40,ry:-d*ROT,rx:0,rz:0,
+    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.3,1-Math.abs(d)/6.5),blur:Math.min(1.2,Math.abs(d)*.18)};
 }
 
 /* 封面内容：场景细节长在封面里 */
@@ -47,10 +47,10 @@ function CoverArt({ it }: { it: Item }) {
     const gloss=<span style={{position:"absolute",inset:0,background:"linear-gradient(155deg,rgba(255,255,255,.28),transparent 42%,transparent 62%,rgba(0,0,0,.22))"}}/>;
     const cap=(t:string,s:string,m:string,bg:string)=><span style={{position:"absolute",left:0,right:0,bottom:0,padding:"24px 9px 9px",background:bg,color:"#fff"}}><small style={{display:"block",fontSize:6.5,letterSpacing:".14em",opacity:.78,marginBottom:2}}>{s} · {m}</small><b style={{display:"block",fontSize:12,lineHeight:1.1}}>{t}</b></span>;
     void geo; void gloss; void cap;
-    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(180deg,${it.c1} 0%,${it.c2} 62%,rgba(0,0,0,.4) 100%)`}}>{geo.mountain}{geo.sun}{gloss}{cap(it.title,it.sub,it.meta,"linear-gradient(transparent,rgba(6,8,16,.7))")}</div>;
+    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(160deg,${it.c1},${it.c2})`}}>{geo[it.art]}{gloss}{cap(it.title,it.sub,it.meta,"linear-gradient(transparent,rgba(6,8,16,.8))")}</div>;
 }
 
-export default function CoverFlow49() {
+export default function CoverFlow22() {
   const [off, setOff] = useState(0)
   const [hover, setHover] = useState(false)
   const [flipped, setFlipped] = useState<number | null>(null)
@@ -116,7 +116,7 @@ export default function CoverFlow49() {
           })}
         </div>
       </div>
-      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 长卷平移</div>
+      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 鼓形翻动</div>
     </div>
   )
 }

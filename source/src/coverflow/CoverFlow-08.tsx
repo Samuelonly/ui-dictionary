@@ -1,33 +1,33 @@
 /**
- * CoverFlow 8 · Bookshelf Spine Carousel
- * 书架书脊轮播
- * 场景：一本本书立着排，书脊朝外，横向划过去。
- * 来源：shadcnblocks.com/blocks/coverflow 编号 8 的做法，独立实现（非原版代码）。
+ * CoverFlow 8 · Autoplay Story Ring
+ * 限时动态计时流
+ * 场景：竖版动态一张张换，顶部进度条慢慢走完。
+ * 来源：shadcnblocks.com/blocks/coverflow 编号 11 的做法，独立实现（非原版代码）。
  * 单文件可复制：只依赖 React；封面是本地画的假图，无外链。
  */
 import { useEffect, useRef, useState } from "react"
 import type { PointerEvent as RPointerEvent, WheelEvent as RWheelEvent, ReactNode } from "react"
 
-const SHAPE: string = "book"
-const FAMILY: string = "spine"
+const SHAPE: string = "story"
+const FAMILY: string = "row"
 const INTERACTION: string = "hover"
-const STAGE: string = "#241c14"
-const CW: number = 46
-const CH: number = 140
-const RADIUS: number = 3
-const SPACING: number = 52
+const STAGE: string = "#15121f"
+const CW: number = 92
+const CH: number = 146
+const RADIUS: number = 10
+const SPACING: number = 118
 const ROT: number = 0
-const SCALE_STEP: number = 0.06
+const SCALE_STEP: number = 0.1
 void SHAPE; void FAMILY; void INTERACTION; void STAGE; void CW; void CH; void RADIUS; void SPACING; void ROT; void SCALE_STEP
 
 type Item = { [k: string]: string }
-const ITEMS: Item[] = [{"c1": "#2c3e50", "c2": "#1a252f", "art": "book", "title": "设计中的设计", "sub": "原研哉", "meta": "设计"}, {"c1": "#8e44ad", "c2": "#5b2c6f", "art": "book", "title": "人类简史", "sub": "尤瓦尔", "meta": "历史"}, {"c1": "#c0392b", "c2": "#78281f", "art": "book", "title": "乡土中国", "sub": "费孝通", "meta": "社会学"}, {"c1": "#16697a", "c2": "#0b3c45", "art": "book", "title": "走向未来", "sub": "未知", "meta": "科技"}, {"c1": "#d68910", "c2": "#9a5d08", "art": "book", "title": "万历十五年", "sub": "黄仁宇", "meta": "历史"}, {"c1": "#27ae60", "c2": "#186a3b", "art": "book", "title": "寂静的春天", "sub": "蕾切尔", "meta": "科普"}, {"c1": "#34495e", "c2": "#1c2833", "art": "book", "title": "思考快与慢", "sub": "卡尼曼", "meta": "心理"}, {"c1": "#a04000", "c2": "#6e2c00", "art": "book", "title": "易经", "sub": "佚名", "meta": "哲学"}]
+const ITEMS: Item[] = [{"c1": "#833ab4", "c2": "#fd1d1d", "art": "sun", "title": "小林", "sub": "2 小时前", "meta": "旅行"}, {"c1": "#f7971e", "c2": "#ffd200", "art": "soft", "title": "阿哲", "sub": "4 小时前", "meta": "日常"}, {"c1": "#0f2027", "c2": "#2c5364", "art": "wave", "title": "Nina", "sub": "6 小时前", "meta": "健身"}, {"c1": "#ee0979", "c2": "#ff6a00", "art": "petal", "title": "光路", "sub": "8 小时前", "meta": "美食"}, {"c1": "#134e5e", "c2": "#71b280", "art": "mountain", "title": "远山", "sub": "昨天", "meta": "户外"}, {"c1": "#3a1c71", "c2": "#d76d77", "art": "dots", "title": "Momo", "sub": "昨天", "meta": "宠物"}, {"c1": "#4568dc", "c2": "#b06ab3", "art": "ring", "title": "设计酱", "sub": "2 天前", "meta": "灵感"}, {"c1": "#0f3443", "c2": "#34e89e", "art": "dune", "title": "青野", "sub": "2 天前", "meta": "摄影"}]
 
 function wrap(d: number, n: number) { return ((d + n / 2) % n + n) % n - n / 2 }
 function place(i: number, n: number, off: number) {
   const d = wrap(i - off, n)
-  return {x:d*SPACING,y:0,z:-Math.abs(d)*14,ry:0,rx:0,rz:0,
-    sc:Math.max(.6,1-Math.abs(d)*SCALE_STEP),op:Math.max(.4,1-Math.abs(d)/7),blur:Math.min(.8,Math.abs(d)*.14)};
+  return {x:d*SPACING,y:0,z:-Math.abs(d)*18,ry:0,rx:0,rz:0,
+    sc:Math.max(.5,1-Math.abs(d)*SCALE_STEP),op:Math.max(.32,1-Math.abs(d)/6.5),blur:Math.min(1.4,Math.abs(d)*.22)};
 }
 
 /* 封面内容：场景细节长在封面里 */
@@ -47,10 +47,10 @@ function CoverArt({ it }: { it: Item }) {
     const gloss=<span style={{position:"absolute",inset:0,background:"linear-gradient(155deg,rgba(255,255,255,.28),transparent 42%,transparent 62%,rgba(0,0,0,.22))"}}/>;
     const cap=(t:string,s:string,m:string,bg:string)=><span style={{position:"absolute",left:0,right:0,bottom:0,padding:"24px 9px 9px",background:bg,color:"#fff"}}><small style={{display:"block",fontSize:6.5,letterSpacing:".14em",opacity:.78,marginBottom:2}}>{s} · {m}</small><b style={{display:"block",fontSize:12,lineHeight:1.1}}>{t}</b></span>;
     void geo; void gloss; void cap;
-    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(160deg,${it.c1},${it.c2})`,boxShadow:"inset 3px 0 6px rgba(0,0,0,.35),inset -2px 0 3px rgba(255,255,255,.12)"}}>
-      <span style={{position:"absolute",left:5,top:8,bottom:8,width:1,background:"rgba(255,255,255,.25)"}}/>
-      <span style={{position:"absolute",left:"50%",top:12,bottom:34,color:"#fff",writingMode:"vertical-rl",textAlign:"center",fontSize:12,fontWeight:700,letterSpacing:".18em",transform:"translateX(-50%)"}}>{it.title}</span>
-      <span style={{position:"absolute",left:0,right:0,bottom:10,color:"rgba(255,255,255,.8)",fontSize:7,textAlign:"center"}}>{it.sub}</span></div>;
+    return <div style={{position:"absolute",inset:0,overflow:"hidden",background:`linear-gradient(160deg,${it.c1},${it.c2})`}}>{geo[it.art]}{gloss}
+      <span style={{position:"absolute",left:6,right:6,top:6,display:"flex",gap:2}}><span style={{height:2,flex:1,background:"#fff",borderRadius:2}}/><span style={{height:2,flex:1,background:"rgba(255,255,255,.5)",borderRadius:2}}/><span style={{height:2,flex:1,background:"rgba(255,255,255,.5)",borderRadius:2}}/></span>
+      <span style={{position:"absolute",left:8,top:14,width:22,height:22,borderRadius:"50%",border:"2px solid #fff",boxShadow:"0 0 0 2px rgba(225,29,72,.8)"}}/>
+      <span style={{position:"absolute",left:0,right:0,bottom:0,padding:"24px 9px 9px",background:"linear-gradient(transparent,rgba(0,0,0,.6))",color:"#fff"}}><b style={{fontSize:10}}>{it.title}</b><small style={{fontSize:6.5,opacity:.85,marginLeft:5}}>{it.sub}</small></span></div>;
 }
 
 export default function CoverFlow08() {
@@ -119,7 +119,7 @@ export default function CoverFlow08() {
           })}
         </div>
       </div>
-      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 书脊滑过</div>
+      <div style={{ position: "absolute", left: 11, bottom: 9, zIndex: 9, fontSize: 8, letterSpacing: ".1em", padding: "4px 8px", borderRadius: 99, background: "rgba(15,15,25,.55)", color: "#fff" }}>鼠标划过 → 切换动态</div>
     </div>
   )
 }

@@ -54,6 +54,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CatContext, PrototypeStage, SCENE_COMPONENTS } from "./Prototype"
 import "./proto.css"
 import { CoverFlowSection } from "./CoverFlowSection"
+import { AppShellSection } from "./AppShellSection"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 /* ================= 通用骨架 ================= */
@@ -298,7 +299,7 @@ export default function App() {
       {/* Hero */}
       <div className="py-10 text-center px-4">
         <h1 className="text-4xl font-bold tracking-tight">UI 词典</h1>
-        <p className="mt-3 text-muted-foreground">51 个词 + 23 个场景化 CoverFlow 编号</p>
+        <p className="mt-3 text-muted-foreground">51 个词 + 23 个 CoverFlow + 8 个 Application Shell</p>
         <p className="mt-1.5 text-xs text-muted-foreground">大 Tab 切分类 · 每类横向三列 · 编号横向走 · 页面默认待机，悬停/点击才演 · <span className="text-emerald-600">右上角「更多 N 种」= 一个词的全部效果</span></p>
       </div>
 
@@ -308,7 +309,7 @@ export default function App() {
           <div className="mx-auto max-w-[1500px] px-6 py-3">
             <TabsList className="grid w-full grid-cols-4 h-11">
               <TabsTrigger value="c1" className="text-[11px] sm:text-sm">① 组件词 21</TabsTrigger>
-              <TabsTrigger value="c2" className="text-[11px] sm:text-sm">② 布局词 7</TabsTrigger>
+              <TabsTrigger value="c2" className="text-[11px] sm:text-sm">② 布局词 7+</TabsTrigger>
               <TabsTrigger value="c3" className="text-[11px] sm:text-sm">③ 动效词 19</TabsTrigger>
               <TabsTrigger value="c4" className="text-[11px] sm:text-sm">④ 响应式 4</TabsTrigger>
             </TabsList>
@@ -656,6 +657,10 @@ export default function App() {
                 </div>
               </Entry>
 
+            </div>
+
+            <div className="col-span-full">
+              <AppShellSection />
             </div>
             </CatContext.Provider>
           </TabsContent>
